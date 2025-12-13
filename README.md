@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500;700&display=swap" rel="stylesheet">
 
   <style>
+    /* --- CSS Reset and Variables for External Systems --- */
     :root {
       --primary: #ff9f47;
       --primary-dark: #e88b35;
@@ -19,33 +20,38 @@
       --shadow: 0 10px 30px rgba(0,0,0,0.08);
     }
 
+    /* ********* KEY FIX FOR SCALING IN EXTERNAL SITES ********* */
+    /* Forces the container to use the full mobile width (100% of viewport width) 
+       and prevents outer styling from adding padding/margins */
     body {
       font-family: 'Rubik', sans-serif;
       background: var(--bg-color);
-      margin: 0;
-      padding: 0;
+      margin: 0 !important; /* Forces reset of external margins */
+      padding: 0 !important; /* Forces reset of external padding */
       color: var(--text-color);
-      padding-bottom: 40px;
+      padding-bottom: 40px !important;
+      overflow-x: hidden; /* Prevents horizontal scroll */
     }
 
     /* --- Header Cleaned --- */
     .header-hero {
       width: 100%;
-      height: 100px; /* גובה נמוך יותר בלי תמונה */
+      height: 100px;
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       box-shadow: 0 5px 15px rgba(0,0,0,0.15);
       position: relative;
       border-bottom-left-radius: 30px;
       border-bottom-right-radius: 30px;
+      /* Ensures content is centered vertically and horizontally */
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
     }
     
     .header-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 20px;
+      padding: 0; /* Clean up padding from previous versions */
       text-align: center;
+      /* Positioning adjusted to use Flexbox on header-hero */
     }
 
     .header-title {
@@ -55,14 +61,17 @@
       margin: 0;
       text-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
-
+    
     .container {
       max-width: 600px;
-      margin: -20px auto 0; /* הקטנתי את המרווח שנוצר מהתמונה */
+      width: 95vw; /* Forces the main content to fit the viewport width */
+      margin: -20px auto 0;
       position: relative;
       padding: 0 15px;
+      box-sizing: border-box;
     }
-
+    
+    /* --- General Card Styling (Unchanged) --- */
     .card {
       background: var(--card-bg);
       border-radius: var(--radius);
@@ -98,7 +107,7 @@
     }
     .phone-btn:hover { background: var(--secondary); color: #fff; }
 
-    /* --- Form Elements --- */
+    /* --- Form Elements (Unchanged) --- */
     label {
       font-size: 14px;
       font-weight: 700;
@@ -125,7 +134,7 @@
       box-shadow: 0 0 0 3px rgba(255, 159, 71, 0.2);
     }
 
-    /* --- Waffle Section --- */
+    /* --- Waffle Section (Unchanged) --- */
     .waffle-card {
       background: #fff;
       border: 2px solid #eee;
@@ -164,7 +173,7 @@
       margin-bottom: 15px;
     }
     
-    /* עיצוב כפתורי בחירה מודרניים במקום צ'קבוקס */
+    /* עיצוב כפתורי בחירה מודרניים במקום צ'קבוקס (Unchanged) */
     .option-btn input { display: none; }
     .option-btn label {
       cursor: pointer;
@@ -188,14 +197,7 @@
       box-shadow: 0 4px 10px rgba(255, 159, 71, 0.4);
     }
 
-    /* --- Payment --- */
-    .payment-container {
-      background: #fdfdfd;
-      border: 1px solid #eee;
-      padding: 15px;
-      border-radius: 12px;
-      margin-top: 20px;
-    }
+    /* --- Payment & Buttons (Unchanged) --- */
     .payment-hidden { display: none; }
 
     .payment-radios {
