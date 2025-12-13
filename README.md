@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
 
   <style>
+    /* --- משתנים ועיצוב כללי --- */
     :root{
       --waffle-color:#ff9f47;
       --waffle-bg:#fff4e4;
@@ -76,6 +77,7 @@
     }
     input[type="time"]{max-width:150px;}
 
+    /* --- וופל --- */
     .waffle-box{
       background:var(--waffle-bg);
       padding:18px;
@@ -120,6 +122,7 @@
     }
     .topping-group:first-child{border-top:none;padding-top:0;}
 
+    /* --- בחירת תשלום --- */
     .payment-selection-group{margin-top:10px;}
     .payment-selection-group input[type="radio"]{display:none;}
     .payment-selection-group input[type="radio"] + label{
@@ -186,13 +189,13 @@
 
     .payment-section-hidden{display:none !important;}
 
-    /* ✅ תיקון עיצוב: הבלוק עצמו לא FLEX. רק השורה בפנים */
+    /* עיצוב בלוק המידע (מספר להעתקה) */
     .payment-info{
       background:#fff3c4;
       padding:12px;
       border-radius:10px;
       margin-top:10px;
-      display:none;            /* נשאר מוסתר עד בחירה */
+      display:none;           
       font-weight:700;
       color:#d67a00;
       border-left:5px solid var(--waffle-color);
@@ -539,7 +542,7 @@ function sendUnifiedOrder() {
 
   for (let i = 1; i <= qty; i++) {
     const sauces = [...document.querySelectorAll(`input[name="sauce_${i}"]:checked`)].map(x => x.value);
-    const tops   = [...document.querySelectorAll(`input[name="top_${i}"]:checked`)].map(x => x.value);
+    const tops    = [...document.querySelectorAll(`input[name="top_${i}"]:checked`)].map(x => x.value);
     const extras = [...document.querySelectorAll(`input[name="extra_${i}"]:checked`)].map(x => x.value);
 
     orderDetails.waffles.push({
@@ -550,62 +553,66 @@ function sendUnifiedOrder() {
     });
   }
 
-  // ✅ הודעה למרכז ההזמנות (בלי "סיכום למטבח" ובלי בלוק העתקה)
-  let orderMsg =
-    `[ORDER_ID: ${orderDetails.orderId}]\n` +
-    `*🔔 הזמנה חדשה (וופל בלגי) 🔔*\n` +
-    "==============================\n" +
-    `*קוד הזמנה*: ${orderDetails.orderId}\n` +
-    `*פרטי לקוח:*\n` +
-    `*שם*: ${orderDetails.customerName}\n` +
-    `*טלפון*: ${orderDetails.customerPhone}\n` +
-    `*שעה רצויה לאיסוף*: ${orderDetails.pickupTime}\n` +
-    `*כמות*: ${orderDetails.quantity}\n` +
-    `*סה\"כ לתשלום*: ${orderDetails.totalPrice} ש\"ח\n` +
-    `*אמצעי תשלום*: ${orderDetails.paymentMethod}\n` +
-    "==============================\n" +
-    "*פירוט ההזמנה:*\n";
+  // === בניית ההודעה המעוצבת (עם אימוג'ים) ===
+  let orderMsg = 
+    `🧇 *הזמנה חדשה - וופל בלגי* 🧇\n` +
+    `🔢 *מספר הזמנה:* ${orderDetails.orderId}\n` +
+    `----------------------------------\n` +
+    `👤 *פרטי לקוח:*\n` +
+    `🔹 *שם:* ${orderDetails.customerName}\n` +
+    `📞 *טלפון:* ${orderDetails.customerPhone}\n` +
+    `🕒 *שעה רצויה לאיסוף:* ${orderDetails.pickupTime}\n\n` +
+    `🧾 *סיכום כללי:*\n` +
+    `📦 *כמות:* ${orderDetails.quantity}\n` +
+    `💰 *סה"כ לתשלום:* ${orderDetails.totalPrice} ש"ח\n` +
+    `💳 *אמצעי תשלום:* ${orderDetails.paymentMethod}\n` +
+    `----------------------------------\n` +
+    `📋 *פירוט המנות:*\n`;
 
   if (orderDetails.quantity === 0) {
-    orderMsg += `*אין וופלים בהזמנה זו.* (פנייה כללית).\n`;
+    orderMsg += `❓ *אין וופלים בהזמנה זו* (פנייה כללית).\n`;
   } else {
     orderDetails.waffles.forEach(w => {
-      orderMsg +=
-        `\n*וופל #${w.id}*:\n` +
-        `רטבים: ${w.sauces}\n` +
-        `תוספות: ${w.toppings}\n` +
-        `פיניש: ${w.extras}\n`;
+      orderMsg += 
+        `\n🔸 *וופל #${w.id}*:\n` +
+        `   🍫 רטבים: ${w.sauces}\n` +
+        `   🍬 תוספות: ${w.toppings}\n` +
+        `   ✨ פיניש: ${w.extras}\n`;
     });
   }
 
-  if (orderDetails.notes) orderMsg += `\n*הערות כלליות*: ${orderDetails.notes}\n`;
+  if (orderDetails.notes) {
+    orderMsg += `\n📣 *הערות כלליות:* ${orderDetails.notes}\n`;
+  }
 
-  orderMsg +=
-    "\n==============================\n" +
-    `${pay && pay.value !== "מזומן" ? '🔴 *הערה לתשלום:* הלקוח מתבקש לצרף אישור תשלום.\n' : ''}`;
+  orderMsg += 
+    `\n----------------------------------\n` +
+    `${pay && pay.value !== "מזומן" ? '📸 *נא לצרף אישור תשלום כאן*\n' : ''}`;
 
   window.open(waLink(MY_PHONE_NUMBER, orderMsg), "_blank");
 
-  // קבלה ללקוח
+  // === בניית הקבלה ללקוח (עם אימוג'ים) ===
   const customerWa = toWaNumber(orderDetails.customerPhone);
   let receiptMsg =
-    `✅ קבלה - וופל בלגי על מקל\n\n` +
-    `*קוד הזמנה*: ${orderDetails.orderId}\n` +
-    `*סה\"כ*: ${orderDetails.totalPrice} ש\"ח\n` +
-    `*אמצעי תשלום*: ${orderDetails.paymentMethod}\n` +
-    `*שעה*: ${orderDetails.pickupTime}\n\n` +
-    `*פירוט:*\n`;
+    `✨ *קבלה - וופל בלגי על מקל* ✨\n\n` +
+    `🔢 *קוד הזמנה:* ${orderDetails.orderId}\n` +
+    `💰 *סה"כ:* ${orderDetails.totalPrice} ש"ח\n` +
+    `💳 *תשלום:* ${orderDetails.paymentMethod}\n` +
+    `🕒 *שעה:* ${orderDetails.pickupTime}\n\n` +
+    `🛒 *פירוט:* \n`;
 
   if (orderDetails.quantity === 0) {
-    receiptMsg += `אין פירוט וופלים (פנייה כללית).\n`;
+    receiptMsg += `פנייה כללית ללא וופלים.\n`;
   } else {
     receiptMsg += orderDetails.waffles.map(w =>
-      `\n*וופל #${w.id}*\n` +
-      `רטבים: ${w.sauces}\n` +
-      `תוספות: ${w.toppings}\n` +
-      `פיניש: ${w.extras}\n`
+      `\n🧇 *וופל #${w.id}*\n` +
+      `   🍫 ${w.sauces}\n` +
+      `   🍬 ${w.toppings}\n` +
+      `   ✨ ${w.extras}\n`
     ).join("");
   }
+  
+  receiptMsg += `\nתודה רבה! 🙏❤`;
 
   document.getElementById("receiptLink").href = waLink(customerWa, receiptMsg);
   document.getElementById("receiptBox").style.display = "block";
@@ -616,7 +623,6 @@ function sendUnifiedOrder() {
   }, 1200);
 }
 
-// ✅ תשלום + פתיחה + העתקה (בלי לשבור עיצוב)
 document.querySelectorAll('input[name="pay"]').forEach(r => {
   r.addEventListener("change", () => {
     const val = r.value;
