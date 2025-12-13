@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>וופל בלגי על מקל | הזמנה</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght=300;500;700&display=swap" rel="stylesheet">
 
   <style>
     /* --- CSS Reset and Variables for External Systems --- */
@@ -21,16 +21,14 @@
     }
 
     /* ********* KEY FIX FOR SCALING IN EXTERNAL SITES ********* */
-    /* Forces the container to use the full mobile width (100% of viewport width) 
-       and prevents outer styling from adding padding/margins */
     body {
       font-family: 'Rubik', sans-serif;
       background: var(--bg-color);
-      margin: 0 !important; /* Forces reset of external margins */
-      padding: 0 !important; /* Forces reset of external padding */
+      margin: 0 !important;
+      padding: 0 !important;
       color: var(--text-color);
       padding-bottom: 40px !important;
-      overflow-x: hidden; /* Prevents horizontal scroll */
+      overflow-x: hidden;
     }
 
     /* --- Header Cleaned --- */
@@ -42,16 +40,14 @@
       position: relative;
       border-bottom-left-radius: 30px;
       border-bottom-right-radius: 30px;
-      /* Ensures content is centered vertically and horizontally */
       display: flex; 
       align-items: center; 
       justify-content: center;
     }
     
     .header-overlay {
-      padding: 0; /* Clean up padding from previous versions */
+      padding: 0;
       text-align: center;
-      /* Positioning adjusted to use Flexbox on header-hero */
     }
 
     .header-title {
@@ -64,7 +60,7 @@
     
     .container {
       max-width: 600px;
-      width: 95vw; /* Forces the main content to fit the viewport width */
+      width: 95vw;
       margin: -20px auto 0;
       position: relative;
       padding: 0 15px;
@@ -173,7 +169,6 @@
       margin-bottom: 15px;
     }
     
-    /* עיצוב כפתורי בחירה מודרניים במקום צ'קבוקס (Unchanged) */
     .option-btn input { display: none; }
     .option-btn label {
       cursor: pointer;
@@ -304,6 +299,7 @@
     .error-msg { color: #ff3b30; font-size: 12px; display: none; margin-top: 4px; }
     .input-error { border-color: #ff3b30 !important; }
 
+    /* --- Receipt Styling (Updated) --- */
     .receipt-section {
       display: none;
       margin-top: 20px;
@@ -313,15 +309,20 @@
       text-align: center;
       border: 1px solid #b7eac5;
     }
+    /* Removed receipt-links container as there is only one button */
+    
+    /* Green for self-send (The cool green! - Now the only button) */
     .receipt-link {
-      display: inline-block;
-      margin-top: 10px;
-      background: #25D366;
+      display: block;
       color: white;
-      padding: 10px 20px;
-      border-radius: 20px;
+      padding: 12px 20px; /* Slightly bigger padding for single button */
+      border-radius: 10px;
       text-decoration: none;
       font-weight: bold;
+      background: #25D366; 
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+      font-size: 18px; 
+      margin-top: 15px;
     }
 
   </style>
@@ -396,9 +397,10 @@
       <button class="btn-main" id="sendBtn" onclick="sendOrder()">שליחת הזמנה לווטסאפ 🚀</button>
       
       <div id="receiptBox" class="receipt-section">
-        <div style="font-weight:bold; color:#155724; margin-bottom:5px;">ההזמנה נשלחה בהצלחה?</div>
-        <div>לחץ כאן כדי לשלוח קבלה ללקוח:</div>
-        <a id="receiptLink" href="#" target="_blank" class="receipt-link">שלח קבלה 🧾</a>
+        <div style="font-weight:bold; color:#155724; margin-bottom:5px;">ההזמנה נשלחה בהצלחה!</div>
+        <div style="font-size:14px; color:#333;">לחץ לשליחת אישור קבלה לנייד שלך:</div>
+        
+        <a id="receiptLink" href="#" target="_blank" class="receipt-link">שלח לי קבלה 📲</a>
       </div>
 
       <button class="btn-reset" onclick="resetForm()">איפוס טופס</button>
@@ -478,7 +480,7 @@ function getWaffleHTML(i) {
     <div class="waffle-title-name">
       <b>🧇 וופל #${i}</b>
     </div>
-    <label for="waffle_name_${i}" style="font-size:14px; color:var(--primary-dark);">שם לוופל (למשל: יאיר, סטי):</label>
+    <label for="waffle_name_${i}" style="font-size:14px; color:var(--primary-dark);">איך אתה קורא לוופל שלך?</label>
     <input type="text" id="waffle_name_${i}" class="waffle_name_input" placeholder="שם הוופל (אופציונלי)" style="margin-bottom: 15px;">
     
     <label style="font-size:13px; color:#777;">רטבים:</label>
@@ -629,6 +631,7 @@ function sendOrder() {
     `➖➖➖➖➖➖➖➖\n` +
     `📋 *פירוט:*\n`;
 
+  let detailsText = ''; // To store the details section for the receipt
   if (qty > 0) {
     for(let i=1; i<=qty; i++) {
       const getVal = (n) => [...document.querySelectorAll(`input[name="${n}_${i}"]:checked`)].map(x=>x.value).join(', ');
@@ -642,28 +645,39 @@ function sendOrder() {
       const tops = getVal('top') || 'ללא';
       const extra = getVal('extra') || 'ללא';
       
-      msg += `\n🔸 ${title}:\n   🍫 רטבים: ${sauces}\n   🍪 תוספות: ${tops}\n   🍦 פיניש: ${extra}\n`;
+      const waffleDetails = `\n🔸 ${title}:\n   🍫 רטבים: ${sauces}\n   🍪 תוספות: ${tops}\n   🍦 פיניש: ${extra}\n`;
+      msg += waffleDetails;
+      detailsText += waffleDetails;
     }
   } else {
     msg += `(ללא וופלים - פנייה כללית)\n`;
+    detailsText = '(אין וופלים בהזמנה זו)';
   }
 
   if (notes) msg += `\n📣 *הערות:* ${notes}\n`;
   if (payMethod !== 'מזומן' && qty > 0) msg += `\n📸 *נא לצרף אישור תשלום*`;
 
-  // Open WA
+  // 1. Open WA to YOU (The business owner)
   window.open(`https://wa.me/${MY_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
 
-  // Receipt Logic
+  // 2. Receipt Logic (For the customer)
   let receipt = 
     `🧾 *קבלה - וופל בלגי* 🧾\n` +
-    `תאריך: ${new Date().toLocaleDateString()}\n` +
-    `שם: ${name}\n` +
-    `סה"כ לתשלום: ${total} ₪ (${payMethod})\n\n` +
-    `פירוט:\n${msg.split('פירוט:')[1].split('➖➖')[0]}`; // Hacky slice to get details
+    `שלום ${name}!\n` +
+    `תאריך: ${new Date().toLocaleDateString('he-IL')}\n` +
+    `➖➖➖➖➖➖➖➖\n` +
+    `💰 *סה"כ לתשלום:* ${total} ₪\n` +
+    `💳 *אמצעי תשלום:* ${payMethod}\n` +
+    `🕒 *איסוף משוער:* ${time}\n` +
+    `➖➖➖➖➖➖➖➖\n` +
+    `*פירוט הזמנה:*\n${detailsText}\n` +
+    `תודה רבה שהזמנת מאיתנו! נתראה בקרוב! ✨`;
 
   const cleanPhone = phone.replace(/\D/g,'').replace(/^0/,'972');
+  
+  // Set the link for the single green receipt button
   document.getElementById('receiptLink').href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(receipt)}`;
+  
   document.getElementById('receiptBox').style.display = 'block';
 
   setTimeout(() => {
