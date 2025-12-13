@@ -3,677 +3,678 @@
 <head>
   <meta charset="UTF-8">
   <title>וופל בלגי על מקל | הזמנה</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500;700&display=swap" rel="stylesheet">
 
   <style>
-    /* --- משתנים ועיצוב כללי --- */
-    :root{
-      --waffle-color:#ff9f47;
-      --waffle-bg:#fff4e4;
-      --main-font:'Heebo',sans-serif;
-      --dark-brown:#4a2c1b;
+    :root {
+      --primary: #ff9f47;
+      --primary-dark: #e88b35;
+      --secondary: #4a2c1b;
+      --bg-color: #fff9f2;
+      --card-bg: #ffffff;
+      --text-color: #333;
+      --success: #25D366;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
     }
 
-    body{
-      font-family:var(--main-font);
-      background:#ffe9d1;
-      margin:0;
-      padding:0;
-      direction:rtl;
+    body {
+      font-family: 'Rubik', sans-serif;
+      background: var(--bg-color);
+      margin: 0;
+      padding: 0;
+      color: var(--text-color);
+      padding-bottom: 40px;
     }
 
-    .box{
-      max-width:600px;
-      margin:20px auto;
-      background:#fff;
-      padding:30px;
-      border-radius:20px;
-      box-shadow:0 5px 15px rgba(0,0,0,.1);
+    /* --- Header Image --- */
+    .header-hero {
+      width: 100%;
+      height: 220px;
+      background-image: url('https://images.unsplash.com/photo-1561575558-450371302ee6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'); 
+      background-size: cover;
+      background-position: center;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    
+    .header-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+      padding: 20px;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      text-align: center;
     }
 
-    .title{
-      font-size:36px;
-      font-weight:700;
-      text-align:center;
-      margin:20px 0 10px;
-      color:var(--dark-brown);
+    .header-title {
+      color: white;
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
-    .price{
-      text-align:center;
-      font-size:20px;
-      margin-bottom:15px;
-      color:#884a22;
+    .container {
+      max-width: 600px;
+      margin: -40px auto 0;
+      position: relative;
+      padding: 0 15px;
     }
 
-    .phone-link-container{text-align:center;margin-bottom:25px;}
-    .phone-link{
-      color:var(--dark-brown);
-      font-weight:700;
-      text-decoration:none;
-      border:1px solid var(--waffle-color);
-      padding:8px 15px;
-      border-radius:8px;
-      background:#fff3e6;
-      display:inline-block;
-      transition:.2s;
-    }
-    .phone-link:hover{background:var(--waffle-color);color:#fff;}
-
-    label{font-weight:700;margin-top:20px;display:block;color:#333;}
-    input:not([type="radio"]):not([type="checkbox"]), textarea{
-      width:100%;
-      padding:12px;
-      margin-top:5px;
-      border-radius:8px;
-      border:1px solid #ddd;
-      box-sizing:border-box;
-      transition:border-color .3s;
-    }
-    input:focus, textarea:focus{
-      border-color:var(--waffle-color);
-      outline:none;
-    }
-    input[type="time"]{max-width:150px;}
-
-    /* --- וופל --- */
-    .waffle-box{
-      background:var(--waffle-bg);
-      padding:18px;
-      border-radius:12px;
-      margin-top:20px;
-      border:1px solid #ff9f4730;
-    }
-    .waffle-box b{
-      font-size:18px;
-      color:var(--dark-brown);
-      display:block;
-      margin-bottom:5px;
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 25px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
     }
 
-    .waffle-box input[type="checkbox"]{display:none;}
-    .waffle-box input[type="checkbox"] + label{
-      background:#f7f7f7;
-      padding:8px 15px;
-      border-radius:20px;
-      border:1px solid #ddd;
-      display:inline-block;
-      margin-left:5px;
-      margin-bottom:10px;
-      cursor:pointer;
-      transition:.2s;
-      font-size:15px;
-      font-weight:500;
-    }
-    .waffle-box input[type="checkbox"]:checked + label{
-      background:var(--waffle-color);
-      color:#fff;
-      border-color:var(--waffle-color);
-      box-shadow:0 2px 4px #0003;
-      transform:scale(1.05);
+    .price-badge {
+      background: #fff3e6;
+      color: var(--secondary);
+      padding: 8px 15px;
+      border-radius: 50px;
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 15px;
+      border: 1px solid var(--primary);
     }
 
-    .topping-group{
-      margin:15px 0;
-      font-weight:400;
-      border-top:1px dashed #ff9f4760;
-      padding-top:10px;
+    .phone-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 2px solid var(--secondary);
+      color: var(--secondary);
+      padding: 10px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: 0.2s;
+      margin-bottom: 20px;
     }
-    .topping-group:first-child{border-top:none;padding-top:0;}
+    .phone-btn:hover { background: var(--secondary); color: #fff; }
 
-    /* --- בחירת תשלום --- */
-    .payment-selection-group{margin-top:10px;}
-    .payment-selection-group input[type="radio"]{display:none;}
-    .payment-selection-group input[type="radio"] + label{
-      background:#f7f7f7;
-      padding:10px 18px;
-      border-radius:25px;
-      border:1px solid #ddd;
-      display:inline-block;
-      margin-left:10px;
-      margin-bottom:10px;
-      cursor:pointer;
-      transition:.2s;
-      font-size:16px;
-      font-weight:500;
+    /* --- Form Elements --- */
+    label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 6px;
+      display: block;
     }
-    .payment-selection-group input[type="radio"]:checked + label{
-      background:var(--waffle-color);
-      color:#fff;
-      border-color:var(--waffle-color);
-      box-shadow:0 2px 4px #0003;
-      transform:scale(1.05);
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 14px;
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: 0.3s;
+      outline: none;
     }
-
-    .btn{
-      width:100%;
-      background:var(--waffle-color);
-      padding:16px;
-      border-radius:10px;
-      color:#fff;
-      font-weight:700;
-      font-size:19px;
-      border:none;
-      margin-top:30px;
-      cursor:pointer;
-      box-shadow:0 4px 6px rgba(255,159,71,.4);
-      transition:.2s;
-    }
-    .btn.secondary{
-      background:#ccc;
-      margin-top:10px;
-      color:#222;
-      box-shadow:none;
+    input:focus, textarea:focus {
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(255, 159, 71, 0.2);
     }
 
-    .btn.pay{
-      margin-top:10px;
-      font-size:16px;
-      padding:12px;
-      font-weight:700;
+    /* --- Waffle Section --- */
+    .waffle-card {
+      background: #fff;
+      border: 2px solid #eee;
+      border-radius: 15px;
+      padding: 15px;
+      margin-top: 15px;
+      animation: slideIn 0.4s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .btn.pay.bit{background:#2b5cff;}
-    .btn.pay.paybox{background:#00bfa5;}
-
-    .total-display{
-      margin-top:15px;
-      font-weight:700;
-      font-size:22px;
-      padding:10px;
-      border-radius:8px;
-      background:#fff3e6;
-      color:var(--dark-brown);
-      text-align:center;
+    .waffle-card::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; width: 6px; height: 100%;
+      background: var(--primary);
     }
-
-    .payment-section-hidden{display:none !important;}
-
-    /* עיצוב בלוק המידע (מספר להעתקה) */
-    .payment-info{
-      background:#fff3c4;
-      padding:12px;
-      border-radius:10px;
-      margin-top:10px;
-      display:none;           
-      font-weight:700;
-      color:#d67a00;
-      border-left:5px solid var(--waffle-color);
-    }
-    .payment-row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .payment-text{
-      flex:1;
-      min-width:180px;
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .copy-btn{
-      background:#f0f0f0;
-      border:1px solid #ccc;
-      color:#333;
-      padding:7px 12px;
-      border-radius:8px;
-      font-size:14px;
-      font-weight:700;
-      cursor:pointer;
-      transition:.1s;
-      flex-shrink:0;
-    }
-    .copy-btn:hover{background:#e1e1e1;}
-    .copy-btn.copied{
-      background:#4CAF50;
-      border-color:#4CAF50;
-      color:#fff;
+    .waffle-title {
+      font-size: 18px;
+      color: var(--secondary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
-    .required-star{color:red;font-size:14px;margin-right:5px;}
-    .error-border{border:2px solid red !important;}
-    .error-text{color:red;font-size:12px;margin-top:-5px;display:none;}
+    .options-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    
+    /* עיצוב כפתורי בחירה מודרניים במקום צ'קבוקס */
+    .option-btn input { display: none; }
+    .option-btn label {
+      cursor: pointer;
+      padding: 8px 14px;
+      background: #f0f0f0;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #555;
+      border: 1px solid transparent;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin: 0;
+    }
+    
+    .option-btn input:checked + label {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 10px rgba(255, 159, 71, 0.4);
+    }
 
-    .receipt-box{
-      display:none;
-      margin-top:12px;
-      background:#eafff0;
-      border:1px solid #b8f3cc;
-      padding:10px;
-      border-radius:10px;
-      font-weight:700;
-      text-align:center;
+    /* --- Payment --- */
+    .payment-container {
+      background: #fdfdfd;
+      border: 1px solid #eee;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 20px;
     }
-    .receipt-box a{
-      display:inline-block;
-      margin-top:8px;
-      background:#25D366;
-      color:#fff;
-      padding:10px 12px;
-      border-radius:10px;
-      text-decoration:none;
+    .payment-hidden { display: none; }
+
+    .payment-radios {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .pay-radio input { display: none; }
+    .pay-radio label {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+    .pay-radio input:checked + label {
+      border-color: var(--primary);
+      background: #fff8f0;
+      color: var(--primary-dark);
+      font-weight: 700;
     }
 
-    .site-note{
-      margin-top:25px;
-      padding-top:15px;
-      border-top:2px dashed #ff9f4760;
-      text-align:center;
-      font-weight:700;
-      color:var(--dark-brown);
-      font-size:15px;
+    .copy-box {
+      background: #fff;
+      border: 1px dashed var(--primary);
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 14px;
     }
+    .copy-btn-action {
+      background: #eee;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .copy-btn-action.copied { background: #4CAF50; color: white; }
+
+    /* --- Buttons --- */
+    .btn-main {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #ff9f47, #ff8520);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(255, 133, 32, 0.4);
+      cursor: pointer;
+      margin-top: 25px;
+      transition: transform 0.2s;
+    }
+    .btn-main:active { transform: scale(0.98); }
+    
+    .btn-app {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 12px;
+      border-radius: 10px;
+      color: white;
+      font-weight: 700;
+      text-decoration: none;
+      margin-top: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn-bit { background: #2b5cff; }
+    .btn-paybox { background: #00bfa5; }
+
+    .btn-reset {
+      background: none;
+      border: none;
+      color: #999;
+      text-decoration: underline;
+      margin-top: 15px;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .total-bar {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--secondary);
+      margin: 20px 0;
+      padding: 15px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .error-msg { color: #ff3b30; font-size: 12px; display: none; margin-top: 4px; }
+    .input-error { border-color: #ff3b30 !important; }
+
+    .receipt-section {
+      display: none;
+      margin-top: 20px;
+      background: #e6ffed;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid #b7eac5;
+    }
+    .receipt-link {
+      display: inline-block;
+      margin-top: 10px;
+      background: #25D366;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
   </style>
 </head>
-
 <body>
-<div class="box">
-  <div class="title">וופל בלגי על מקל 🧇</div>
-  <div class="price">מחיר בסיס: 7 ש"ח לוופל</div>
 
-  <div class="phone-link-container">
-    <a href="tel:972542296540" class="phone-link">📞 התקשרו אלינו: 054-2296540</a>
-  </div>
-
-  <label for="name">שם: <span class="required-star">*</span></label>
-  <input id="name" required>
-  <div id="error-name" class="error-text">שדה חובה</div>
-
-  <label for="phone">טלפון: <span class="required-star">*</span></label>
-  <input id="phone" type="tel" required>
-  <div id="error-phone" class="error-text">שדה חובה</div>
-
-  <label for="time">שעה רצויה לאיסוף:</label>
-  <input id="time" type="time">
-
-  <hr style="margin:25px 0;border:0;border-top:2px dashed #ff9f4760;">
-
-  <label for="qty">כמות וופלים:</label>
-  <input id="qty" type="number" min="0" value="0">
-  <div id="error-qty" class="error-text">אם הכמות 0, יש למלא הערות כלליות.</div>
-
-  <div id="total" class="total-display">סה"כ: 0 ש"ח</div>
-
-  <div id="waffles"></div>
-
-  <div id="payment-section" class="payment-options-container payment-section-hidden">
-    <label>אמצעי תשלום: <span class="required-star">*</span></label>
-
-    <div id="payment-options" class="payment-selection-group">
-      <input type="radio" name="pay" value="ביט" id="pay_bit"><label for="pay_bit"> 📲 ביט</label>
-      <input type="radio" name="pay" value="פייבוקס" id="pay_fb"><label for="pay_fb"> 📱 פייבוקס</label>
-      <input type="radio" name="pay" value="מזומן" id="pay_cash"><label for="pay_cash"> 💵 מזומן</label>
-    </div>
-    <div id="error-pay" class="error-text">נא לבחור אמצעי תשלום</div>
-
-    <div id="paymentInfo" class="payment-info"></div>
-
-    <button id="openPayBtn" class="btn pay" style="display:none;" type="button">פתח לתשלום</button>
-
-    <div id="paymentUploadInfo" style="display:none;margin-top:10px;font-weight:700;color:var(--dark-brown);">
-      חשוב: אחרי התשלום, חזור לשיחה וצרף צילום מסך/קבלה בווטסאפ.
+  <div class="header-hero">
+    <div class="header-overlay">
+      <h1 class="header-title">וופל בלגי על מקל 🧇</h1>
     </div>
   </div>
 
-  <label for="notes">הערות (חובה למלא אם הכמות 0):</label>
-  <textarea id="notes" placeholder="כאן ניתן להוסיף הערות כלליות להזמנה..."></textarea>
+  <div class="container">
+    <div class="card">
+      <div style="text-align:center;">
+        <span class="price-badge">רק 7 ש"ח לוופל!</span>
+      </div>
+      <a href="tel:0542296540" class="phone-btn">📞 להזמנות: 054-2296540</a>
 
-  <button id="sendBtn" class="btn" onclick="sendUnifiedOrder()">שליחת הזמנה לוואטסאפ</button>
-  <button class="btn secondary" type="button" onclick="resetForm()">איפוס טופס</button>
+      <label>שם מלא <span style="color:red">*</span></label>
+      <input type="text" id="name" placeholder="איך קוראים לך?">
+      <div id="err-name" class="error-msg">נא למלא שם</div>
 
-  <div id="receiptBox" class="receipt-box">
-    כדי לשלוח קבלה ללקוח לחץ כאן:
-    <br>
-    <a id="receiptLink" href="#" target="_blank">שלח קבלה ללקוח</a>
+      <label style="margin-top:15px">טלפון <span style="color:red">*</span></label>
+      <input type="tel" id="phone" placeholder="מספר נייד">
+      <div id="err-phone" class="error-msg">נא למלא טלפון תקין</div>
+
+      <label style="margin-top:15px">שעה לאיסוף</label>
+      <input type="time" id="time">
+    </div>
+
+    <div class="card">
+      <label style="font-size:18px;">כמה וופלים לפנק? 😋</label>
+      <div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+        <button onclick="changeQty(-1)" style="width:40px; height:40px; border-radius:10px; border:1px solid #ddd; background:#fff; font-size:20px; cursor:pointer;">-</button>
+        <input type="number" id="qty" value="0" min="0" style="text-align:center; font-size:20px; font-weight:bold; width:60px; padding:5px;">
+        <button onclick="changeQty(1)" style="width:40px; height:40px; border-radius:10px; border:none; background:var(--primary); color:#fff; font-size:20px; cursor:pointer;">+</button>
+      </div>
+      <div id="err-qty" class="error-msg">יש לבחור כמות או למלא הערות</div>
+
+      <div id="waffles-container"></div>
+    </div>
+
+    <div class="total-bar" id="totalDisplay">סה"כ: 0 ש"ח</div>
+
+    <div id="payment-section" class="card payment-hidden">
+      <label>איך תרצו לשלם? <span style="color:red">*</span></label>
+      
+      <div class="payment-radios">
+        <div class="pay-radio">
+          <input type="radio" name="pay" id="p_bit" value="ביט">
+          <label for="p_bit">ביט</label>
+        </div>
+        <div class="pay-radio">
+          <input type="radio" name="pay" id="p_pb" value="פייבוקס">
+          <label for="p_pb">פייבוקס</label>
+        </div>
+        <div class="pay-radio">
+          <input type="radio" name="pay" id="p_cash" value="מזומן">
+          <label for="p_cash">מזומן</label>
+        </div>
+      </div>
+      <div id="err-pay" class="error-msg">נא לבחור אמצעי תשלום</div>
+
+      <div id="payment-dynamic-area"></div>
+    </div>
+
+    <div class="card">
+      <label>הערות / בקשות מיוחדות</label>
+      <textarea id="notes" rows="3" placeholder="כאן אפשר לכתוב כל דבר נוסף..."></textarea>
+      
+      <button class="btn-main" id="sendBtn" onclick="sendOrder()">שליחת הזמנה לווטסאפ 🚀</button>
+      
+      <div id="receiptBox" class="receipt-section">
+        <div style="font-weight:bold; color:#155724; margin-bottom:5px;">ההזמנה נשלחה בהצלחה?</div>
+        <div>לחץ כאן כדי לשלוח קבלה ללקוח:</div>
+        <a id="receiptLink" href="#" target="_blank" class="receipt-link">שלח קבלה 🧾</a>
+      </div>
+
+      <button class="btn-reset" onclick="resetForm()">איפוס טופס</button>
+      
+      <div style="text-align:center; margin-top:20px; font-size:13px; color:#888;">
+        ⭐ חובה ללחוץ על "שלח" בתוך הוואטסאפ כדי שההזמנה תתקבל
+      </div>
+    </div>
   </div>
-
-  <div class="site-note">
-    ⭐ כדי שההזמנה תיקלט – חייבים לסיים את השליחה בווטסאפ (ללחוץ על “שלח”)
-  </div>
-</div>
 
 <script>
 const PRICE = 7;
-const MY_PHONE_NUMBER = "972542296540";
-const BIT_NUMBER = "0506205953";
-const PAYBOX_NUMBER = "0542296540";
+const MY_PHONE = "972542296540";
+const BIT_NUM = "0506205953";
+const PB_NUM = "0542296540";
 
-function toWaNumber(phone) {
-  let d = (phone || "").replace(/\D/g, "");
-  if (d.startsWith("972")) return d;
-  if (d.startsWith("0")) return "972" + d.slice(1);
-  if (d.length === 9 && d.startsWith("5")) return "972" + d;
-  return d;
+// --- Logic ---
+
+function changeQty(delta) {
+  const el = document.getElementById('qty');
+  let val = parseInt(el.value) || 0;
+  val += delta;
+  if(val < 0) val = 0;
+  el.value = val;
+  updateUI();
 }
 
-function generateOrderId() {
-  const now = new Date();
-  const datePart = now.getFullYear().toString().slice(2) +
-    (now.getMonth() + 1).toString().padStart(2, '0') +
-    now.getDate().toString().padStart(2, '0');
-  const timePart = now.getHours().toString().padStart(2, '0') +
-    now.getMinutes().toString().padStart(2, '0') +
-    now.getSeconds().toString().padStart(2, '0');
-  return `WAFFLE-${datePart}-${timePart}`;
-}
+document.getElementById('qty').addEventListener('input', updateUI);
 
-function waLink(phoneNumber, text) {
-  return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
-}
+// Load saved data on start
+document.addEventListener('DOMContentLoaded', () => {
+  const savedName = localStorage.getItem('waffle_name');
+  const savedPhone = localStorage.getItem('waffle_phone');
+  if(savedName) document.getElementById('name').value = savedName;
+  if(savedPhone) document.getElementById('phone').value = savedPhone;
+  updateUI();
+});
 
-function openBitPayment(){ window.location.href = "bit://"; }
-function openPayBoxPayment(){ window.location.href = "paybox://"; }
+function updateUI() {
+  const qty = parseInt(document.getElementById('qty').value) || 0;
+  const container = document.getElementById('waffles-container');
+  const paySection = document.getElementById('payment-section');
+  const totalDisplay = document.getElementById('totalDisplay');
 
-async function copyToClipboard(textToCopy, btnElement) {
-  try {
-    await navigator.clipboard.writeText(textToCopy);
-    const original = btnElement.innerText;
-    btnElement.innerText = "✅ הועתק!";
-    btnElement.classList.add('copied');
-    setTimeout(() => {
-      btnElement.innerText = original;
-      btnElement.classList.remove('copied');
-    }, 1400);
-  } catch (err) {
-    alert("העתקה נכשלה. אנא העתק ידנית: " + textToCopy);
-  }
-}
+  // Update Total
+  totalDisplay.innerText = `סה"כ: ${qty * PRICE} ש"ח`;
 
-function updateWaffles() {
-  const qtyInput = document.getElementById("qty");
-  let qty = Number(qtyInput.value);
-  const paymentSection = document.getElementById("payment-section");
-  const paymentInfo = document.getElementById("paymentInfo");
-  const openBtn = document.getElementById("openPayBtn");
-  const uploadBox = document.getElementById("paymentUploadInfo");
-
-  if (qty < 0 || isNaN(qty)) { qty = 0; qtyInput.value = 0; }
-
-  document.getElementById("total").innerText = `סה"כ: ${qty * PRICE} ש"ח`;
-
+  // Show/Hide Payment
   if (qty > 0) {
-    paymentSection.classList.remove("payment-section-hidden");
+    paySection.classList.remove('payment-hidden');
   } else {
-    paymentSection.classList.add("payment-section-hidden");
-    paymentInfo.style.display = "none";
-    paymentInfo.innerHTML = "";
-    uploadBox.style.display = "none";
-    openBtn.style.display = "none";
-    document.querySelectorAll('input[name="pay"]').forEach(radio => radio.checked = false);
-  }
-
-  let html = "";
-  for (let i = 1; i <= qty; i++) {
-    html += `
-      <div class="waffle-box">
-        <b>🧇 וופל #${i}</b>
-
-        <div class="topping-group">
-          <label>רטבים:</label>
-          <input type="checkbox" id="sauce_choc_${i}" name="sauce_${i}" value="שוקולד"><label for="sauce_choc_${i}">🍫 שוקולד</label>
-          <input type="checkbox" id="sauce_maple_${i}" name="sauce_${i}" value="מייפל"><label for="sauce_maple_${i}">🥞 מייפל</label>
-          <input type="checkbox" id="sauce_milk_${i}" name="sauce_${i}" value="ריבת חלב"><label for="sauce_milk_${i}">🥛 ריבת חלב</label>
-        </div>
-
-        <div class="topping-group">
-          <label>תוספות:</label>
-          <input type="checkbox" id="top_oreo_${i}" name="top_${i}" value="אוראו"><label for="top_oreo_${i}">⚫ אוראו</label>
-          <input type="checkbox" id="top_lotus_${i}" name="top_${i}" value="לוטוס"><label for="top_lotus_${i}">🍪 לוטוס</label>
-          <input type="checkbox" id="top_click_${i}" name="top_${i}" value="קליק"><label for="top_click_${i}">✨ קליק</label>
-          <input type="checkbox" id="top_lentils_${i}" name="top_${i}" value="עדשים"><label for="top_lentils_${i}">🟢 עדשים</label>
-        </div>
-
-        <div class="topping-group">
-          <label>מעל:</label>
-          <input type="checkbox" id="extra_cream_${i}" name="extra_${i}" value="קצפת"><label for="extra_cream_${i}">🍦 קצפת</label>
-          <input type="checkbox" id="extra_sug_${i}" name="extra_${i}" value="סוכריות"><label for="extra_sug_${i}">🍬 סוכריות</label>
-        </div>
-      </div>
-    `;
-  }
-  document.getElementById("waffles").innerHTML = html;
-}
-
-document.getElementById("qty").addEventListener("input", updateWaffles);
-document.addEventListener("DOMContentLoaded", updateWaffles);
-
-function resetForm() {
-  if (confirm("האם אתה בטוח שברצונך לאפס את כל פרטי הטופס?")) {
-    document.getElementById("name").value = "";
-    document.getElementById("phone").value = "";
-    document.getElementById("time").value = "";
-    document.getElementById("qty").value = 0;
-    document.getElementById("notes").value = "";
-
+    paySection.classList.add('payment-hidden');
+    // Clear payment selection if hidden
     document.querySelectorAll('input[name="pay"]').forEach(r => r.checked = false);
-
-    document.getElementById("paymentInfo").style.display = "none";
-    document.getElementById("paymentInfo").innerHTML = "";
-    document.getElementById("paymentUploadInfo").style.display = "none";
-    document.getElementById("openPayBtn").style.display = "none";
-    document.getElementById("receiptBox").style.display = "none";
-
-    document.querySelectorAll('.error-text').forEach(el => el.style.display = "none");
-    document.querySelectorAll('input, textarea, #payment-options').forEach(el => el.classList.remove("error-border"));
-
-    updateWaffles();
-  }
-}
-
-function validateField(id, errorTextId, validationFn, errorMessage) {
-  const input = document.getElementById(id);
-  const errorEl = document.getElementById(errorTextId);
-  const ok = validationFn(input.value);
-
-  if (!ok) {
-    input.classList.add("error-border");
-    errorEl.innerText = errorMessage;
-    errorEl.style.display = "block";
-  } else {
-    input.classList.remove("error-border");
-    errorEl.style.display = "none";
-  }
-  return ok;
-}
-
-function sendUnifiedOrder() {
-  const sendBtn = document.getElementById('sendBtn');
-  if (sendBtn.disabled) return;
-
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const time = document.getElementById("time").value.trim();
-  const pay = document.querySelector('input[name="pay"]:checked');
-  const qty = Number(document.getElementById("qty").value);
-  const notes = document.getElementById("notes").value.trim();
-
-  let isFormValid = true;
-
-  if (!validateField("name", "error-name", v => v.length > 0, "נא למלא את השם.")) isFormValid = false;
-  if (!validateField("phone", "error-phone", v => v.replace(/\D/g, "").length >= 7, "נא למלא טלפון תקין (מינימום 7 ספרות).")) isFormValid = false;
-
-  if (qty === 0 && notes.length === 0) {
-    document.getElementById("qty").classList.add("error-border");
-    document.getElementById("error-qty").innerText = "אם הכמות 0, יש למלא הערות כלליות (למשל, לתיאום שעה/בירור).";
-    document.getElementById("error-qty").style.display = "block";
-    document.getElementById("notes").classList.add("error-border");
-    isFormValid = false;
-  } else {
-    document.getElementById("qty").classList.remove("error-border");
-    document.getElementById("error-qty").style.display = "none";
-    document.getElementById("notes").classList.remove("error-border");
+    document.getElementById('payment-dynamic-area').innerHTML = '';
   }
 
-  const errorPayEl = document.getElementById("error-pay");
-  const paymentOptionsEl = document.getElementById("payment-options");
-  if (qty > 0 && !pay) {
-    paymentOptionsEl.classList.add("error-border");
-    errorPayEl.style.display = "block";
-    isFormValid = false;
-  } else {
-    paymentOptionsEl.classList.remove("error-border");
-    errorPayEl.style.display = "none";
-  }
-
-  if (!isFormValid) {
-    alert("נא לתקן את השדות המסומנים באדום לפני השליחה.");
-    return;
-  }
-
-  sendBtn.disabled = true;
-  sendBtn.innerText = "פותח ווטסאפ...";
-
-  const orderId = generateOrderId();
-  const totalPrice = qty * PRICE;
-  const paymentStatus = pay ? pay.value : 'לא רלוונטי (כמות 0)';
-
-  const orderDetails = {
-    orderId,
-    customerName: name,
-    customerPhone: phone,
-    pickupTime: time || 'לא צוין',
-    quantity: qty,
-    totalPrice,
-    paymentMethod: paymentStatus,
-    notes,
-    waffles: []
-  };
-
-  for (let i = 1; i <= qty; i++) {
-    const sauces = [...document.querySelectorAll(`input[name="sauce_${i}"]:checked`)].map(x => x.value);
-    const tops    = [...document.querySelectorAll(`input[name="top_${i}"]:checked`)].map(x => x.value);
-    const extras = [...document.querySelectorAll(`input[name="extra_${i}"]:checked`)].map(x => x.value);
-
-    orderDetails.waffles.push({
-      id: i,
-      sauces: sauces.join(", ") || "ללא רטבים",
-      toppings: tops.join(", ") || "ללא תוספות",
-      extras: extras.join(", ") || "ללא פיניש"
-    });
-  }
-
-  // === בניית ההודעה המעוצבת (עם אימוג'ים) ===
-  let orderMsg = 
-    `🧇 *הזמנה חדשה - וופל בלגי* 🧇\n` +
-    `🔢 *מספר הזמנה:* ${orderDetails.orderId}\n` +
-    `----------------------------------\n` +
-    `👤 *פרטי לקוח:*\n` +
-    `🔹 *שם:* ${orderDetails.customerName}\n` +
-    `📞 *טלפון:* ${orderDetails.customerPhone}\n` +
-    `🕒 *שעה רצויה לאיסוף:* ${orderDetails.pickupTime}\n\n` +
-    `🧾 *סיכום כללי:*\n` +
-    `📦 *כמות:* ${orderDetails.quantity}\n` +
-    `💰 *סה"כ לתשלום:* ${orderDetails.totalPrice} ש"ח\n` +
-    `💳 *אמצעי תשלום:* ${orderDetails.paymentMethod}\n` +
-    `----------------------------------\n` +
-    `📋 *פירוט המנות:*\n`;
-
-  if (orderDetails.quantity === 0) {
-    orderMsg += `❓ *אין וופלים בהזמנה זו* (פנייה כללית).\n`;
-  } else {
-    orderDetails.waffles.forEach(w => {
-      orderMsg += 
-        `\n🔸 *וופל #${w.id}*:\n` +
-        `   🍫 רטבים: ${w.sauces}\n` +
-        `   🍬 תוספות: ${w.toppings}\n` +
-        `   ✨ פיניש: ${w.extras}\n`;
-    });
-  }
-
-  if (orderDetails.notes) {
-    orderMsg += `\n📣 *הערות כלליות:* ${orderDetails.notes}\n`;
-  }
-
-  orderMsg += 
-    `\n----------------------------------\n` +
-    `${pay && pay.value !== "מזומן" ? '📸 *נא לצרף אישור תשלום כאן*\n' : ''}`;
-
-  window.open(waLink(MY_PHONE_NUMBER, orderMsg), "_blank");
-
-  // === בניית הקבלה ללקוח (עם אימוג'ים) ===
-  const customerWa = toWaNumber(orderDetails.customerPhone);
-  let receiptMsg =
-    `✨ *קבלה - וופל בלגי על מקל* ✨\n\n` +
-    `🔢 *קוד הזמנה:* ${orderDetails.orderId}\n` +
-    `💰 *סה"כ:* ${orderDetails.totalPrice} ש"ח\n` +
-    `💳 *תשלום:* ${orderDetails.paymentMethod}\n` +
-    `🕒 *שעה:* ${orderDetails.pickupTime}\n\n` +
-    `🛒 *פירוט:* \n`;
-
-  if (orderDetails.quantity === 0) {
-    receiptMsg += `פנייה כללית ללא וופלים.\n`;
-  } else {
-    receiptMsg += orderDetails.waffles.map(w =>
-      `\n🧇 *וופל #${w.id}*\n` +
-      `   🍫 ${w.sauces}\n` +
-      `   🍬 ${w.toppings}\n` +
-      `   ✨ ${w.extras}\n`
-    ).join("");
-  }
+  // Generate Waffle Cards (Preserve existing selections if possible logic omitted for simplicity, re-render is safer for simple forms)
+  // Note: A smarter diffing algo would be better, but for this scale, re-rendering based on count is OK. 
+  // To keep user input when increasing qty, we read values first? 
+  // For simplicity in this "upgrade", we will only append if growing, or remove from end if shrinking.
   
-  receiptMsg += `\nתודה רבה! 🙏❤`;
-
-  document.getElementById("receiptLink").href = waLink(customerWa, receiptMsg);
-  document.getElementById("receiptBox").style.display = "block";
-
-  setTimeout(() => {
-    sendBtn.disabled = false;
-    sendBtn.innerText = "שליחת הזמנה לוואטסאפ";
-  }, 1200);
+  const currentCards = container.children.length;
+  
+  if (qty > currentCards) {
+    for (let i = currentCards + 1; i <= qty; i++) {
+      const div = document.createElement('div');
+      div.className = 'waffle-card';
+      div.innerHTML = getWaffleHTML(i);
+      container.appendChild(div);
+    }
+  } else if (qty < currentCards) {
+    while (container.children.length > qty) {
+      container.removeChild(container.lastChild);
+    }
+  }
 }
 
-document.querySelectorAll('input[name="pay"]').forEach(r => {
-  r.addEventListener("change", () => {
-    const val = r.value;
+function getWaffleHTML(i) {
+  return `
+    <div class="waffle-title"><b>🧇 וופל #${i}</b></div>
+    
+    <label style="font-size:13px; color:#777;">רטבים:</label>
+    <div class="options-grid">
+      <div class="option-btn">
+        <input type="checkbox" id="s_choc_${i}" name="sauce_${i}" value="שוקולד">
+        <label for="s_choc_${i}">🍫 שוקולד</label>
+      </div>
+      <div class="option-btn">
+        <input type="checkbox" id="s_maple_${i}" name="sauce_${i}" value="מייפל">
+        <label for="s_maple_${i}">🥞 מייפל</label>
+      </div>
+      <div class="option-btn">
+        <input type="checkbox" id="s_milk_${i}" name="sauce_${i}" value="ריבת חלב">
+        <label for="s_milk_${i}">🥛 ריבת חלב</label>
+      </div>
+    </div>
 
-    const infoBox = document.getElementById("paymentInfo");
-    const uploadBox = document.getElementById("paymentUploadInfo");
-    const openBtn = document.getElementById("openPayBtn");
+    <label style="font-size:13px; color:#777;">תוספות:</label>
+    <div class="options-grid">
+      <div class="option-btn">
+        <input type="checkbox" id="t_oreo_${i}" name="top_${i}" value="אוראו">
+        <label for="t_oreo_${i}">⚫ אוראו</label>
+      </div>
+      <div class="option-btn">
+        <input type="checkbox" id="t_lotus_${i}" name="top_${i}" value="לוטוס">
+        <label for="t_lotus_${i}">🍪 לוטוס</label>
+      </div>
+      <div class="option-btn">
+        <input type="checkbox" id="t_click_${i}" name="top_${i}" value="קליק">
+        <label for="t_click_${i}">✨ קליק</label>
+      </div>
+      <div class="option-btn">
+        <input type="checkbox" id="t_len_${i}" name="top_${i}" value="עדשים">
+        <label for="t_len_${i}">🟢 עדשים</label>
+      </div>
+    </div>
 
-    if (val === "ביט") {
-      infoBox.innerHTML = `
-        <div class="payment-row">
-          <div class="payment-text">📲 מספר לתשלום בביט: <span style="margin-right:10px;">050-6205953</span></div>
-          <button type="button" class="copy-btn" onclick="copyToClipboard('${BIT_NUMBER}', this)">העתק</button>
+    <label style="font-size:13px; color:#777;">פיניש:</label>
+    <div class="options-grid">
+      <div class="option-btn">
+        <input type="checkbox" id="e_cream_${i}" name="extra_${i}" value="קצפת">
+        <label for="e_cream_${i}">🍦 קצפת</label>
+      </div>
+      <div class="option-btn">
+        <input type="checkbox" id="e_sug_${i}" name="extra_${i}" value="סוכריות">
+        <label for="e_sug_${i}">🍬 סוכריות</label>
+      </div>
+    </div>
+  `;
+}
+
+// Payment Logic
+document.querySelectorAll('input[name="pay"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    const val = e.target.value;
+    const area = document.getElementById('payment-dynamic-area');
+    
+    if (val === 'ביט') {
+      area.innerHTML = `
+        <div class="copy-box">
+          <span>מספר לביט: <b>${BIT_NUM}</b></span>
+          <button class="copy-btn-action" onclick="copyText('${BIT_NUM}', this)">העתק</button>
         </div>
+        <button class="btn-app btn-bit" onclick="window.location.href='bit://'">פתח ביט לתשלום</button>
+        <div style="font-size:12px; margin-top:5px; color:#555;">* נא לצרף צילום מסך אחרי התשלום</div>
       `;
-      infoBox.style.display = "block";
-
-      openBtn.style.display = "block";
-      openBtn.className = "btn pay bit";
-      openBtn.innerText = "פתח ביט לתשלום";
-      openBtn.onclick = openBitPayment;
-
-      uploadBox.style.display = "block";
-    }
-
-    else if (val === "פייבוקס") {
-      infoBox.innerHTML = `
-        <div class="payment-row">
-          <div class="payment-text">📲 מספר לתשלום בפייבוקס: <span style="margin-right:10px;">054-2296540</span></div>
-          <button type="button" class="copy-btn" onclick="copyToClipboard('${PAYBOX_NUMBER}', this)">העתק</button>
+    } else if (val === 'פייבוקס') {
+      area.innerHTML = `
+        <div class="copy-box">
+          <span>מספר לפייבוקס: <b>${PB_NUM}</b></span>
+          <button class="copy-btn-action" onclick="copyText('${PB_NUM}', this)">העתק</button>
         </div>
+        <button class="btn-app btn-paybox" onclick="window.location.href='paybox://'">פתח פייבוקס לתשלום</button>
+        <div style="font-size:12px; margin-top:5px; color:#555;">* נא לצרף צילום מסך אחרי התשלום</div>
       `;
-      infoBox.style.display = "block";
-
-      openBtn.style.display = "block";
-      openBtn.className = "btn pay paybox";
-      openBtn.innerText = "פתח פייבוקס לתשלום";
-      openBtn.onclick = openPayBoxPayment;
-
-      uploadBox.style.display = "block";
-    }
-
-    else if (val === "מזומן") {
-      infoBox.innerHTML = `<div>💵 תשלום אצל משפחת טי (באיסוף)</div>`;
-      infoBox.style.display = "block";
-
-      openBtn.style.display = "none";
-      uploadBox.style.display = "none";
+    } else {
+      area.innerHTML = `<div style="background:#fff3cd; padding:10px; border-radius:8px; margin-top:10px; color:#856404;">תשלום במזומן בעת האיסוף.</div>`;
     }
   });
 });
+
+async function copyText(text, btn) {
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.classList.add('copied');
+    btn.innerText = 'הועתק!';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerText = 'העתק';
+    }, 1500);
+  } catch(e) { alert('העתקה לא נתמכת, המספר הוא: ' + text); }
+}
+
+// Validation & Send
+function sendOrder() {
+  // Save user data
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  localStorage.setItem('waffle_name', name);
+  localStorage.setItem('waffle_phone', phone);
+
+  // Validate
+  let valid = true;
+  if (!name) { document.getElementById('err-name').style.display = 'block'; document.getElementById('name').classList.add('input-error'); valid = false; }
+  else { document.getElementById('err-name').style.display = 'none'; document.getElementById('name').classList.remove('input-error'); }
+  
+  if (phone.length < 9) { document.getElementById('err-phone').style.display = 'block'; document.getElementById('phone').classList.add('input-error'); valid = false; }
+  else { document.getElementById('err-phone').style.display = 'none'; document.getElementById('phone').classList.remove('input-error'); }
+
+  const qty = parseInt(document.getElementById('qty').value) || 0;
+  const pay = document.querySelector('input[name="pay"]:checked');
+  const notes = document.getElementById('notes').value;
+
+  if (qty === 0 && !notes) {
+    document.getElementById('err-qty').style.display = 'block';
+    valid = false;
+  } else { document.getElementById('err-qty').style.display = 'none'; }
+
+  if (qty > 0 && !pay) {
+    document.getElementById('err-pay').style.display = 'block';
+    valid = false;
+  } else { document.getElementById('err-pay').style.display = 'none'; }
+
+  if (!valid) return;
+
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+  btn.innerText = "מכין הודעה... ⏳";
+
+  // Build Message
+  const orderId = "WFL-" + Math.floor(Math.random()*10000);
+  const time = document.getElementById('time').value || '--:--';
+  const payMethod = pay ? pay.value : 'ללא (הזמנה ריקה)';
+  const total = qty * PRICE;
+
+  let msg = 
+    `🧇 *הזמנה חדשה - וופל בלגי* 🧇\n` +
+    `🔢 *קוד:* ${orderId}\n` +
+    `➖➖➖➖➖➖➖➖\n` +
+    `👤 *שם:* ${name}\n` +
+    `📞 *טלפון:* ${phone}\n` +
+    `🕒 *איסוף:* ${time}\n` +
+    `➖➖➖➖➖➖➖➖\n` +
+    `📦 *כמות:* ${qty}\n` +
+    `💰 *לתשלום:* ${total} ₪\n` +
+    `💳 *אמצעי תשלום:* ${payMethod}\n` +
+    `➖➖➖➖➖➖➖➖\n` +
+    `📋 *פירוט:*\n`;
+
+  if (qty > 0) {
+    for(let i=1; i<=qty; i++) {
+      const getVal = (n) => [...document.querySelectorAll(`input[name="${n}_${i}"]:checked`)].map(x=>x.value).join(', ');
+      const sauces = getVal('sauce') || 'ללא';
+      const tops = getVal('top') || 'ללא';
+      const extra = getVal('extra') || 'ללא';
+      
+      msg += `\n🔸 *וופל ${i}*:\n   🍫 ${sauces}\n   🍪 ${tops}\n   🍦 ${extra}\n`;
+    }
+  } else {
+    msg += `(ללא וופלים - פנייה כללית)\n`;
+  }
+
+  if (notes) msg += `\n📣 *הערות:* ${notes}\n`;
+  if (payMethod !== 'מזומן' && qty > 0) msg += `\n📸 *נא לצרף אישור תשלום*`;
+
+  // Open WA
+  window.open(`https://wa.me/${MY_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
+
+  // Receipt Logic
+  let receipt = 
+    `🧾 *קבלה - וופל בלגי* 🧾\n` +
+    `תאריך: ${new Date().toLocaleDateString()}\n` +
+    `שם: ${name}\n` +
+    `סה"כ לתשלום: ${total} ₪ (${payMethod})\n\n` +
+    `פירוט:\n${msg.split('פירוט:')[1].split('➖➖')[0]}`; // Hacky slice to get details
+
+  const cleanPhone = phone.replace(/\D/g,'').replace(/^0/,'972');
+  document.getElementById('receiptLink').href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(receipt)}`;
+  document.getElementById('receiptBox').style.display = 'block';
+
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerText = "שליחת הזמנה לווטסאפ 🚀";
+  }, 2000);
+}
+
+function resetForm() {
+  if(confirm("לאפס הכל?")) {
+    location.reload();
+  }
+}
 </script>
+
 </body>
 </html>
