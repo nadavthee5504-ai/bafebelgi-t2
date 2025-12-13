@@ -28,17 +28,15 @@
       padding-bottom: 40px;
     }
 
-    /* --- Header Image --- */
+    /* --- Header Cleaned --- */
     .header-hero {
       width: 100%;
-      height: 220px;
-      background-image: url('https://images.unsplash.com/photo-1561575558-450371302ee6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'); 
-      background-size: cover;
-      background-position: center;
+      height: 100px; /* גובה נמוך יותר בלי תמונה */
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      position: relative;
       border-bottom-left-radius: 30px;
       border-bottom-right-radius: 30px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-      position: relative;
     }
     
     .header-overlay {
@@ -46,10 +44,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
       padding: 20px;
-      border-bottom-left-radius: 30px;
-      border-bottom-right-radius: 30px;
       text-align: center;
     }
 
@@ -58,12 +53,12 @@
       font-size: 32px;
       font-weight: 700;
       margin: 0;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
 
     .container {
       max-width: 600px;
-      margin: -40px auto 0;
+      margin: -20px auto 0; /* הקטנתי את המרווח שנוצר מהתמונה */
       position: relative;
       padding: 0 15px;
     }
@@ -153,7 +148,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .waffle-title {
+    .waffle-title-name {
       font-size: 18px;
       color: var(--secondary);
       margin-bottom: 10px;
@@ -459,11 +454,7 @@ function updateUI() {
     document.getElementById('payment-dynamic-area').innerHTML = '';
   }
 
-  // Generate Waffle Cards (Preserve existing selections if possible logic omitted for simplicity, re-render is safer for simple forms)
-  // Note: A smarter diffing algo would be better, but for this scale, re-rendering based on count is OK. 
-  // To keep user input when increasing qty, we read values first? 
-  // For simplicity in this "upgrade", we will only append if growing, or remove from end if shrinking.
-  
+  // Generate Waffle Cards
   const currentCards = container.children.length;
   
   if (qty > currentCards) {
@@ -482,7 +473,11 @@ function updateUI() {
 
 function getWaffleHTML(i) {
   return `
-    <div class="waffle-title"><b>🧇 וופל #${i}</b></div>
+    <div class="waffle-title-name">
+      <b>🧇 וופל #${i}</b>
+    </div>
+    <label for="waffle_name_${i}" style="font-size:14px; color:var(--primary-dark);">שם לוופל (למשל: יאיר, סטי):</label>
+    <input type="text" id="waffle_name_${i}" class="waffle_name_input" placeholder="שם הוופל (אופציונלי)" style="margin-bottom: 15px;">
     
     <label style="font-size:13px; color:#777;">רטבים:</label>
     <div class="options-grid">
@@ -635,11 +630,17 @@ function sendOrder() {
   if (qty > 0) {
     for(let i=1; i<=qty; i++) {
       const getVal = (n) => [...document.querySelectorAll(`input[name="${n}_${i}"]:checked`)].map(x=>x.value).join(', ');
+      
+      const waffleNameEl = document.getElementById(`waffle_name_${i}`);
+      const waffleName = waffleNameEl ? waffleNameEl.value.trim() : '';
+
+      const title = waffleName ? `*וופל ${i} - ${waffleName}*` : `*וופל ${i}*`;
+      
       const sauces = getVal('sauce') || 'ללא';
       const tops = getVal('top') || 'ללא';
       const extra = getVal('extra') || 'ללא';
       
-      msg += `\n🔸 *וופל ${i}*:\n   🍫 ${sauces}\n   🍪 ${tops}\n   🍦 ${extra}\n`;
+      msg += `\n🔸 ${title}:\n   🍫 רטבים: ${sauces}\n   🍪 תוספות: ${tops}\n   🍦 פיניש: ${extra}\n`;
     }
   } else {
     msg += `(ללא וופלים - פנייה כללית)\n`;
