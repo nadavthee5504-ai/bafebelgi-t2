@@ -65,6 +65,15 @@
       box-shadow: var(--shadow);
       margin-bottom: 16px;
     }
+    
+    /* תוספת קטנה לעיצוב התמונה */
+    .waffle-promo-img {
+      width: 100%;
+      border-radius: 12px;
+      display: block;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
 
     .step-title {
       display: flex;
@@ -461,8 +470,6 @@
       line-height: 1.3;
     }
     .focus-ring:focus-visible { box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.25); }
-    /* זהירות: נראה שיש הגדרה חסרה לקלאס .warn מקודם, הוספתי הגדרה פשוטה כדי שלא יהיו שגיאות */
-    .warn { background:#fff3cd; padding:10px; border-radius:10px; margin-top:10px; color:#856404; border: 1px solid rgba(133,100,4,0.25); font-weight: 800; }
   </style>
 </head>
 
@@ -472,6 +479,11 @@
   </div>
 
   <div class="container">
+
+    <div class="card" style="text-align: center; padding: 10px;">
+        <img src="https://lh3.googleusercontent.com/d/1A3muQYsX909oRKPHZNZQYZ6ny2XpRTYz" class="waffle-promo-img" alt="וופל בלגי על מקל">
+        <div style="font-weight: 800; color: var(--secondary); font-size: 18px;">הוופל הכי טעים בשכונה! 😍</div>
+    </div>
 
     <div class="card">
       <div class="step-title"><span class="step-badge">1</span> פרטים</div>
@@ -547,6 +559,7 @@
         ⭐ חובה ללחוץ על "שלח" בתוך הוואטסאפ כדי שההזמנה תתקבל
       </div>
     </div>
+
   </div>
 
   <div class="sticky-bar">
@@ -559,543 +572,535 @@
     </div>
   </div>
 
-<script>
-const PRICE = 7;
-const MY_PHONE = "972542296540";
-const BIT_NUM = "0506205953";
-const PB_NUM  = "0542296540";
+  <script>
+    const PRICE = 7;
+    const MY_PHONE = "972542296540";
+    const BIT_NUM = "0506205953";
+    const PB_NUM  = "0542296540";
 
-const state = {
-  waffles: [],
-  checkoutMode: false,
-};
+    const state = {
+      waffles: [],
+      checkoutMode: false,   // ✅ חדש: רק בסוף חושפים תשלום
+    };
 
-const $ = (id) => document.getElementById(id);
+    const $ = (id) => document.getElementById(id);
 
-function ensureWaffle(i) {
-  if (!state.waffles[i-1]) {
-    state.waffles[i-1] = { name: "", sauce: [], top: [], extra: [] };
-  }
-  return state.waffles[i-1];
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const savedName  = localStorage.getItem('waffle_name');
-  const savedPhone = localStorage.getItem('waffle_phone');
-  if (savedName)  $('name').value  = savedName;
-  if (savedPhone) $('phone').value = savedPhone;
-
-  $('plusBtn').addEventListener('click', () => changeQty(1));
-  $('minusBtn').addEventListener('click', () => changeQty(-1));
-  $('qty').addEventListener('input', updateUI);
-
-  $('resetBtn').addEventListener('click', resetForm);
-  $('sendBtn').addEventListener('click', onSendClick);
-
-  document.querySelectorAll('input[name="pay"]').forEach(radio => {
-    radio.addEventListener('change', onPaymentChange);
-  });
-
-  $('waffles-container').addEventListener('input', handleWaffleInputChange);
-  $('waffles-container').addEventListener('change', handleWaffleInputChange);
-  $('waffles-container').addEventListener('click', handleWaffleClicks);
-
-  updateUI();
-});
-
-function getCurrentTotal() {
-    const qty = parseInt($('qty').value) || 0;
-    return qty * PRICE;
-}
-
-function changeQty(delta) {
-  const el = $('qty');
-  let val = parseInt(el.value) || 0;
-  val += delta;
-  if (val < 0) val = 0;
-  el.value = val;
-
-  // אם המשתמש שינה כמות באמצע checkout – נשאר ב-checkout אבל נעדכן UI
-  updateUI();
-  // אם שינוי הכמות היה בזמן שבחירת תשלום חשופה, צריך לעדכן את הסכום המוצג
-  if (state.checkoutMode) {
-      const pay = document.querySelector('input[name="pay"]:checked');
-      if (pay) onPaymentChange({ target: pay });
-  }
-}
-
-function updateUI() {
-  const qty = parseInt($('qty').value) || 0;
-  const total = getCurrentTotal();
-  $('totalAmount').innerText = `${total} ₪`;
-
-  // ✅ אנימציית "באמפ" קטנה לסה״כ
-  const pill = $('totalPill');
-  pill.classList.add('bump');
-  setTimeout(() => pill.classList.remove('bump'), 160);
-
-  renderWaffles(qty);
-
-  // ✅ תשלום רק אם checkoutMode פעיל וגם qty>0
-  if (state.checkoutMode && qty > 0) {
-    $('payment-section').classList.remove('payment-hidden');
-  } else {
-    $('payment-section').classList.add('payment-hidden');
-    // נקה בחירת תשלום כשחבוי
-    document.querySelectorAll('input[name="pay"]').forEach(r => r.checked = false);
-    $('payment-dynamic-area').innerHTML = '';
-  }
-
-  for (let i=1; i<=qty; i++) updateWaffleSummary(i);
-}
-
-function renderWaffles(qty) {
-  const container = $('waffles-container');
-  const existing = container.querySelectorAll('.waffle-card').length;
-
-  if (qty > existing) {
-    for (let i = existing + 1; i <= qty; i++) {
-      ensureWaffle(i);
-      const div = document.createElement('div');
-      div.className = 'waffle-card open';
-      div.dataset.index = String(i);
-      div.innerHTML = getWaffleHTML(i);
-      container.appendChild(div);
-      applyWaffleStateToDOM(i);
-      updateWaffleSummary(i);
+    function ensureWaffle(i) {
+      if (!state.waffles[i-1]) {
+        state.waffles[i-1] = { name: "", sauce: [], top: [], extra: [] };
+      }
+      return state.waffles[i-1];
     }
-  }
 
-  if (qty < existing) {
-    const cards = [...container.querySelectorAll('.waffle-card')];
-    for (let i = cards.length; i > qty; i--) cards[i-1].remove();
-  }
-}
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedName  = localStorage.getItem('waffle_name');
+      const savedPhone = localStorage.getItem('waffle_phone');
+      if (savedName)  $('name').value  = savedName;
+      if (savedPhone) $('phone').value = savedPhone;
 
-function getWaffleHTML(i) {
-  return `
-    <div class="waffle-head" role="button" tabindex="0" aria-expanded="true" aria-controls="waffle_body_${i}">
-      <div class="waffle-title">
-        <b>🧇 וופל #${i}</b>
-        <div class="waffle-summary" id="waffle_summary_${i}">—</div>
-      </div>
-      <div class="chev" aria-hidden="true">⌄</div>
-    </div>
+      $('plusBtn').addEventListener('click', () => changeQty(1));
+      $('minusBtn').addEventListener('click', () => changeQty(-1));
+      $('qty').addEventListener('input', updateUI);
 
-    <div class="waffle-body" id="waffle_body_${i}">
-      <div class="waffle-actions">
-        <button class="mini-btn primary focus-ring" type="button" data-action="copy-next" data-index="${i}">שכפל לוופל הבא</button>
-        <button class="mini-btn focus-ring" type="button" data-action="copy-all" data-index="${i}">העתק לכל הוופלים</button>
-        <button class="mini-btn focus-ring" type="button" data-action="clear" data-index="${i}">נקה וופל</button>
-      </div>
+      $('resetBtn').addEventListener('click', resetForm);
+      $('sendBtn').addEventListener('click', onSendClick);
 
-      <label for="waffle_name_${i}" style="font-size:14px; color:var(--primary-dark);">איך אתה קורא לוופל שלך?</label>
-      <input class="focus-ring" type="text" id="waffle_name_${i}" data-field="name" data-index="${i}" placeholder="שם הוופל (אופציונלי)" style="margin-bottom: 14px;">
+      document.querySelectorAll('input[name="pay"]').forEach(radio => {
+        radio.addEventListener('change', onPaymentChange);
+      });
 
-      <label style="font-size:13px; color:#777;">רטבים:</label>
-      <div class="options-grid">
-        ${opt(i,'sauce','סירופ שוקולד','🍫 סירופ שוקולד')}
-        ${opt(i,'sauce','סירופ מייפל','🥞 סירופ מייפל')}
-        ${opt(i,'sauce','ריבת חלב','🥛 ריבת חלב ')}
-        ${opt(i,'sauce','רוטב הבית','🍯 רוטב הבית')} </div>
+      $('waffles-container').addEventListener('input', handleWaffleInputChange);
+      $('waffles-container').addEventListener('change', handleWaffleInputChange);
+      $('waffles-container').addEventListener('click', handleWaffleClicks);
 
-      <label style="font-size:13px; color:#777;">תוספות:</label>
-      <div class="options-grid">
-        ${opt(i,'top','אוראו','⚫ אוראו')}
-        ${opt(i,'top','לוטוס','🍪 לוטוס')}
-        ${opt(i,'top','קליק','✨ קליק')}
-        ${opt(i,'top','עדשים','🟢 עדשים')}
-        ${opt(i,'top','שוקולד צ\'יפס','🍫 שוקולד צ\'יפס')} </div>
+      updateUI();
+    });
 
-      <label style="font-size:13px; color:#777;">פיניש:</label>
-      <div class="options-grid">
-        ${opt(i,'extra','קצפת','🍦 קצפת ')}
-        ${opt(i,'extra','סוכריות','🍬 סוכריות')}
-      </div>
-    </div>
-  `;
-}
+    function changeQty(delta) {
+      const el = $('qty');
+      let val = parseInt(el.value) || 0;
+      val += delta;
+      if (val < 0) val = 0;
+      el.value = val;
 
-function opt(i, group, value, labelHtml) {
-  const id = `${group}_${i}_${slug(value)}`;
-  return `
-    <div class="option-btn">
-      <input type="checkbox" id="${id}" data-field="${group}" data-index="${i}" value="${escapeHtml(value)}">
-      <label class="focus-ring" for="${id}">${labelHtml}</label>
-    </div>
-  `;
-}
-function slug(s) { return String(s).replace(/\s+/g,'_').replace(/[^\w\u0590-\u05FF]+/g,''); }
-
-function handleWaffleClicks(e) {
-  const head = e.target.closest('.waffle-head');
-  if (head) {
-    const card = head.closest('.waffle-card');
-    toggleAccordion(card, head);
-    return;
-  }
-
-  const btn = e.target.closest('button[data-action]');
-  if (!btn) return;
-
-  const action = btn.dataset.action;
-  const i = parseInt(btn.dataset.index, 10);
-
-  if (action === 'clear') {
-    state.waffles[i-1] = { name: "", sauce: [], top: [], extra: [] };
-    applyWaffleStateToDOM(i);
-    updateWaffleSummary(i);
-    flashButton(btn, 'נוקה ✅');
-    return;
-  }
-
-  if (action === 'copy-next') {
-    const qty = parseInt($('qty').value) || 0;
-    if (i >= qty) { flashButton(btn, 'אין וופל הבא'); return; }
-    state.waffles[i] = deepClone(state.waffles[i-1]);
-    applyWaffleStateToDOM(i+1);
-    updateWaffleSummary(i+1);
-    flashButton(btn, 'שוכפל ✅');
-    return;
-  }
-
-  if (action === 'copy-all') {
-    const qty = parseInt($('qty').value) || 0;
-    for (let k=1; k<=qty; k++) {
-      if (k === i) continue;
-      state.waffles[k-1] = deepClone(state.waffles[i-1]);
-      applyWaffleStateToDOM(k);
-      updateWaffleSummary(k);
+      // אם המשתמש שינה כמות באמצע checkout – נשאר ב-checkout אבל נעדכן UI
+      updateUI();
     }
-    flashButton(btn, 'הועתק ✅');
-    return;
-  }
-}
 
-function deepClone(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
+    function updateUI() {
+      const qty = parseInt($('qty').value) || 0;
+      const total = qty * PRICE;
+      $('totalAmount').innerText = `${total} ₪`;
 
-function flashButton(btn, tempText) {
-  const oldText = btn.textContent;
-  btn.classList.add('done');
-  btn.textContent = tempText;
-  setTimeout(() => {
-    btn.classList.remove('done');
-    btn.textContent = oldText;
-  }, 1200);
-}
+      // ✅ אנימציית "באמפ" קטנה לסה״כ
+      const pill = $('totalPill');
+      pill.classList.add('bump');
+      setTimeout(() => pill.classList.remove('bump'), 160);
 
-function toggleAccordion(card, head) {
-  const isOpen = card.classList.contains('open');
-  card.classList.toggle('open', !isOpen);
-  head.setAttribute('aria-expanded', String(!isOpen));
-}
+      renderWaffles(qty);
 
-document.addEventListener('keydown', (e) => {
-  if (e.key !== 'Enter' && e.key !== ' ') return;
-  const head = e.target.closest('.waffle-head');
-  if (!head) return;
-  e.preventDefault();
-  const card = head.closest('.waffle-card');
-  toggleAccordion(card, head);
-});
+      // ✅ תשלום רק אם checkoutMode פעיל וגם qty>0
+      if (state.checkoutMode && qty > 0) {
+        $('payment-section').classList.remove('payment-hidden');
+      } else {
+        $('payment-section').classList.add('payment-hidden');
+        // נקה בחירת תשלום כשחבוי
+        document.querySelectorAll('input[name="pay"]').forEach(r => r.checked = false);
+        $('payment-dynamic-area').innerHTML = '';
+      }
 
-function handleWaffleInputChange(e) {
-  const el = e.target;
-  const idx = parseInt(el.dataset.index || '', 10);
-  const field = el.dataset.field;
-  if (!idx || !field) return;
+      for (let i=1; i<=qty; i++) updateWaffleSummary(i);
+    }
 
-  ensureWaffle(idx);
+    function renderWaffles(qty) {
+      const container = $('waffles-container');
+      const existing = container.querySelectorAll('.waffle-card').length;
 
-  if (field === 'name') {
-    state.waffles[idx-1].name = el.value.trim();
-  } else if (field === 'sauce' || field === 'top' || field === 'extra') {
-    const checked = [...document.querySelectorAll(`input[type="checkbox"][data-index="${idx}"][data-field="${field}"]:checked`)]
-      .map(x => x.value);
-    state.waffles[idx-1][field] = checked;
-  }
-  updateWaffleSummary(idx);
-}
+      if (qty > existing) {
+        for (let i = existing + 1; i <= qty; i++) {
+          ensureWaffle(i);
+          const div = document.createElement('div');
+          div.className = 'waffle-card open';
+          div.dataset.index = String(i);
+          div.innerHTML = getWaffleHTML(i);
+          container.appendChild(div);
+          applyWaffleStateToDOM(i);
+          updateWaffleSummary(i);
+        }
+      }
 
-function applyWaffleStateToDOM(i) {
-  const w = ensureWaffle(i);
-  const nameEl = $(`waffle_name_${i}`);
-  if (nameEl) nameEl.value = w.name || '';
+      if (qty < existing) {
+        const cards = [...container.querySelectorAll('.waffle-card')];
+        for (let i = cards.length; i > qty; i--) cards[i-1].remove();
+      }
+    }
 
-  ['sauce','top','extra'].forEach(group => {
-    const boxes = document.querySelectorAll(`input[type="checkbox"][data-index="${i}"][data-field="${group}"]`);
-    boxes.forEach(b => b.checked = (w[group] || []).includes(b.value));
-  });
-}
+    function getWaffleHTML(i) {
+      return `
+        <div class="waffle-head" role="button" tabindex="0" aria-expanded="true" aria-controls="waffle_body_${i}">
+          <div class="waffle-title">
+            <b>🧇 וופל #${i}</b>
+            <div class="waffle-summary" id="waffle_summary_${i}">—</div>
+          </div>
+          <div class="chev" aria-hidden="true">⌄</div>
+        </div>
 
-function updateWaffleSummary(i) {
-  const w = ensureWaffle(i);
-  const parts = [];
-  const nm = (w.name || '').trim();
-  if (nm) parts.push(`“${nm}”`);
-  if ((w.sauce||[]).length) parts.push(`רטבים: ${(w.sauce||[]).join(', ')}`);
-  if ((w.top||[]).length) parts.push(`תוספות: ${(w.top||[]).join(', ')}`);
-  if ((w.extra||[]).length) parts.push(`פיניש: ${(w.extra||[]).join(', ')}`);
+        <div class="waffle-body" id="waffle_body_${i}">
+          <div class="waffle-actions">
+            <button class="mini-btn primary focus-ring" type="button" data-action="copy-next" data-index="${i}">שכפל לוופל הבא</button>
+            <button class="mini-btn focus-ring" type="button" data-action="copy-all" data-index="${i}">העתק לכל הוופלים</button>
+            <button class="mini-btn focus-ring" type="button" data-action="clear" data-index="${i}">נקה וופל</button>
+          </div>
 
-  const text = parts.length ? parts.join(' | ') : 'עדיין לא בחרת תוספות';
-  const el = $(`waffle_summary_${i}`);
-  if (el) el.textContent = text;
-}
+          <label for="waffle_name_${i}" style="font-size:14px; color:var(--primary-dark);">איך אתה קורא לוופל שלך?</label>
+          <input class="focus-ring" type="text" id="waffle_name_${i}" data-field="name" data-index="${i}" placeholder="שם הוופל (אופציונלי)" style="margin-bottom: 14px;">
 
-function escapeHtml(unsafe) {
-    if (typeof unsafe !== 'string') return unsafe;
-    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
+          <label style="font-size:13px; color:#777;">רטבים:</label>
+          <div class="options-grid">
+            ${opt(i,'sauce','סירופ שוקולד','🍫 סירופ שוקולד')}
+            ${opt(i,'sauce','סירופ מייפל','🥞 סירופ מייפל')}
+            ${opt(i,'sauce','ריבת חלב','🥛 ריבת חלב ')}
+            ${opt(i,'sauce','רוטב הבית','🏠 רוטב הבית')}
+          </div>
 
+          <label style="font-size:13px; color:#777;">תוספות:</label>
+          <div class="options-grid">
+            ${opt(i,'top','אוראו','⚫ אוראו')}
+            ${opt(i,'top','לוטוס','🍪 לוטוס')}
+            ${opt(i,'top','קליק','✨ קליק')}
+            ${opt(i,'top','עדשים','🟢 עדשים')}
+          </div>
 
-/** ✅ תשלום בסוף: קליק ראשון = כניסה ל-checkout (גילוי תשלום)
-    קליק שני = שליחה סופית (אחרי בחירת תשלום) */
-function onSendClick() {
-  const qty = parseInt($('qty').value) || 0;
+          <label style="font-size:13px; color:#777;">פיניש:</label>
+          <div class="options-grid">
+            ${opt(i,'extra','קצפת','🍦 קצפת ')}
+            ${opt(i,'extra','סוכריות','🍬 סוכריות')}
+            ${opt(i,'extra','שוקולד צ׳יפס','🍫 שוקולד צ׳יפס')}
+          </div>
+        </div>
+      `;
+    }
 
-  // אימות בסיסי לפני מעבר ל-checkout (כמו “סיום הזמנה”)
-  const name = $('name').value.trim();
-  const phoneRaw = $('phone').value.trim();
+    function opt(i, group, value, labelHtml) {
+      const id = `${group}_${i}_${slug(value)}`;
+      return `
+        <div class="option-btn">
+          <input type="checkbox" id="${id}" data-field="${group}" data-index="${i}" value="${escapeHtml(value)}">
+          <label class="focus-ring" for="${id}">${labelHtml}</label>
+        </div>
+      `;
+    }
+    function slug(s) { return String(s).replace(/\s+/g,'_').replace(/[^\w\u0590-\u05FF]+/g,''); }
 
-  localStorage.setItem('waffle_name', name);
-  localStorage.setItem('waffle_phone', phoneRaw);
+    function handleWaffleClicks(e) {
+      const head = e.target.closest('.waffle-head');
+      if (head) {
+        const card = head.closest('.waffle-card');
+        toggleAccordion(card, head);
+        return;
+      }
 
-  let ok = true;
-  if (!name) { showError('err-name','name'); ok = false; } else hideError('err-name','name');
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
 
-  const cleanPhone = normalizeILPhone(phoneRaw);
-  if (!cleanPhone) { showError('err-phone','phone'); ok = false; } else hideError('err-phone','phone');
+      const action = btn.dataset.action;
+      const i = parseInt(btn.dataset.index, 10);
 
-  const notes = $('notes').value.trim();
-  if (qty === 0 && !notes) { $('err-qty').style.display = 'block'; ok = false; } else $('err-qty').style.display = 'none';
+      if (action === 'clear') {
+        state.waffles[i-1] = { name: "", sauce: [], top: [], extra: [] };
+        applyWaffleStateToDOM(i);
+        updateWaffleSummary(i);
+        flashButton(btn, 'נוקה ✅');
+        return;
+      }
 
-  if (!ok) return;
+      if (action === 'copy-next') {
+        const qty = parseInt($('qty').value) || 0;
+        if (i >= qty) { flashButton(btn, 'אין וופל הבא'); return; }
+        state.waffles[i] = deepClone(state.waffles[i-1]);
+        applyWaffleStateToDOM(i+1);
+        updateWaffleSummary(i+1);
+        flashButton(btn, 'שוכפל ✅');
+        return;
+      }
 
-  // אם עוד לא ב-checkout — נכנסים אליו ומראים תשלום
-  if (!state.checkoutMode) {
-    state.checkoutMode = true;
-    updateUI();
+      if (action === 'copy-all') {
+        const qty = parseInt($('qty').value) || 0;
+        for (let k=1; k<=qty; k++) {
+          if (k === i) continue;
+          state.waffles[k-1] = deepClone(state.waffles[i-1]);
+          applyWaffleStateToDOM(k);
+          updateWaffleSummary(k);
+        }
+        flashButton(btn, 'הועתק ✅');
+        return;
+      }
+    }
 
-    // גלילה לתשלום
-    $('payment-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    function flashButton(btn, tempText) {
+      const oldText = btn.textContent;
+      btn.classList.add('done');
+      btn.textContent = tempText;
+      setTimeout(() => {
+        btn.classList.remove('done');
+        btn.textContent = oldText;
+      }, 1200);
+    }
 
-    $('sendBtn').textContent = 'שליחה סופית ✅';
-    return;
-  }
+    function toggleAccordion(card, head) {
+      const isOpen = card.classList.contains('open');
+      card.classList.toggle('open', !isOpen);
+      head.setAttribute('aria-expanded', String(!isOpen));
+    }
 
-  // כבר ב-checkout => חייבים אמצעי תשלום אם qty>0
-  const pay = document.querySelector('input[name="pay"]:checked');
-  if (qty > 0 && !pay) {
-    $('err-pay').style.display = 'block';
-    $('payment-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    return;
-  }
-  $('err-pay').style.display = 'none';
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const head = e.target.closest('.waffle-head');
+      if (!head) return;
+      e.preventDefault();
+      const card = head.closest('.waffle-card');
+      toggleAccordion(card, head);
+    });
 
-  // שליחה סופית
-  sendOrder(cleanPhone);
-}
+    function handleWaffleInputChange(e) {
+      const el = e.target;
+      const idx = parseInt(el.dataset.index || '', 10);
+      const field = el.dataset.field;
+      if (!idx || !field) return;
 
-/** ✅ החזרנו כפתור פתיחת אפליקציה + נשארה העתקה - עודכן להצגת סכום */
-function onPaymentChange(e) {
-  const val = e.target.value;
-  const area = $('payment-dynamic-area');
-  const total = getCurrentTotal(); // קבלת הסכום המעודכן
+      ensureWaffle(idx);
 
-  if (val === 'ביט') {
-    area.innerHTML = `
-      <div class="copy-box">
-        <span>סכום לתשלום: <b>${total} ₪</b></span>
-      </div>
-      <div class="copy-box" style="margin-top: 5px;">
-        <span>מספר לביט: <b>${BIT_NUM}</b></span>
-        <button class="copy-btn-action focus-ring" type="button" data-copy="${BIT_NUM}">העתק</button>
-      </div>
-      <button class="btn-app btn-bit focus-ring" type="button" id="openBitBtn">פתח ביט לתשלום</button>
-      <div class="hint">אם לא נפתח — פתח ביט ידנית ושלח לפי המספר 👆</div>
-      <div class="hint"><b>* נא לצרף צילום מסך אחרי התשלום</b></div>
-    `;
-    $('openBitBtn').addEventListener('click', () => openAppLink('bit://'));
-  } else if (val === 'פייבוקס') {
-    area.innerHTML = `
-      <div class="copy-box">
-        <span>סכום לתשלום: <b>${total} ₪</b></span>
-      </div>
-      <div class="copy-box" style="margin-top: 5px;">
-        <span>מספר לפייבוקס: <b>${PB_NUM}</b></span>
-        <button class="copy-btn-action focus-ring" type="button" data-copy="${PB_NUM}">העתק</button>
-      </div>
-      <button class="btn-app btn-paybox focus-ring" type="button" id="openPbBtn">פתח פייבוקס לתשלום</button>
-      <div class="hint">אם לא נפתח — פתח פייבוקס ידנית ושלח לפי המספר 👆</div>
-      <div class="hint"><b>* נא לצרף צילום מסך אחרי התשלום</b></div>
-    `;
-    $('openPbBtn').addEventListener('click', () => openAppLink('paybox://'));
-  } else {
-    area.innerHTML = `<div class="warn">תשלום במזומן בעת האיסוף.</div>`;
-  }
-}
+      if (field === 'name') {
+        state.waffles[idx-1].name = el.value.trim();
+      } else if (field === 'sauce' || field === 'top' || field === 'extra') {
+        const checked = [...document.querySelectorAll(`input[type="checkbox"][data-index="${idx}"][data-field="${field}"]:checked`)]
+          .map(x => x.value);
+        state.waffles[idx-1][field] = checked;
+      }
+      updateWaffleSummary(idx);
+    }
 
-// ניסיון פתיחת אפליקציה (אין דרך 100% לדעת אם נפתח, אז אנחנו נותנים fallback ברור)
-function openAppLink(uri) {
-  try {
-    window.location.href = uri;
-  } catch (e) {
-    alert('לא הצלחתי לפתוח את האפליקציה אוטומטית. פתח ידנית ושלם לפי המספר שמופיע.');
-  }
-}
-
-/** copy buttons */
-document.addEventListener('click', async (e) => {
-  const btn = e.target.closest('button[data-copy]');
-  if (!btn) return;
-  const text = btn.getAttribute('data-copy');
-  await copyTextSmart(text, btn);
-});
-
-async function copyTextSmart(text, btn) {
-  try {
-    await navigator.clipboard.writeText(text);
-    btn.classList.add('copied');
-    btn.innerText = 'הועתק!';
-    setTimeout(() => {
-      btn.classList.remove('copied');
-      btn.innerText = 'העתק';
-    }, 1400);
-  } catch (e) {
-    const tmp = document.createElement('input');
-    tmp.value = text;
-    tmp.style.position = 'fixed';
-    tmp.style.left = '-9999px';
-    document.body.appendChild(tmp);
-    tmp.focus(); tmp.select();
-    alert('העתקה אוטומטית לא נתמכת כאן. סימנתי לך את המספר להעתקה ידנית: ' + text);
-    document.body.removeChild(tmp);
-  }
-}
-
-function normalizeILPhone(raw) {
-  let d = String(raw || '').replace(/\D/g, '');
-  if (d.startsWith('972')) {
-    d = '972' + d.slice(3).replace(/^0+/, '');
-    return d.length >= 11 ? d : null;
-  }
-  if (d.startsWith('0')) d = d.slice(1);
-  if (d.length === 9 && d.startsWith('5')) return '972' + d;
-  return null;
-}
-
-function showError(id, inputId) {
-  $(id).style.display = 'block';
-  if (inputId) $(inputId).classList.add('input-error');
-}
-function hideError(id, inputId) {
-  $(id).style.display = 'none';
-  if (inputId) $(inputId).classList.remove('input-error');
-}
-
-/** ✅ sendOrder מקבל cleanPhone שכבר נבדק */
-function sendOrder(cleanPhone) {
-  const name = $('name').value.trim();
-  const phoneRaw = $('phone').value.trim();
-
-  const qty = parseInt($('qty').value) || 0;
-  const pay = document.querySelector('input[name="pay"]:checked');
-  const notes = $('notes').value.trim();
-
-  const btn = $('sendBtn');
-  btn.disabled = true;
-  btn.textContent = "שולח... ⏳";
-
-  const orderId = "WFL-" + Math.floor(Math.random()*10000);
-  const time = $('time').value || '--:--';
-  const payMethod = pay ? pay.value : 'ללא';
-  const total = getCurrentTotal();
-
-  let msg =
-    `🧇 *הזמנה חדשה - וופל בלגי* 🧇\n` +
-    `🔢 *קוד:* ${orderId}\n` +
-    `➖➖➖➖➖➖➖➖\n` +
-    `👤 *שם:* ${name}\n` +
-    `📞 *טלפון:* ${phoneRaw}\n` +
-    `🕒 *איסוף:* ${time}\n` +
-    `➖➖➖➖➖➖➖➖\n` +
-    `📦 *כמות:* ${qty}\n` +
-    `💰 *לתשלום:* ${total} ₪\n` +
-    `💳 *אמצעי תשלום:* ${payMethod}\n` +
-    `➖➖➖➖➖➖➖➖\n` +
-    `📋 *פירוט:*\n`;
-
-  let detailsText = '';
-  if (qty > 0) {
-    for (let i=1; i<=qty; i++) {
+    function applyWaffleStateToDOM(i) {
       const w = ensureWaffle(i);
-      const title = (w.name && w.name.trim()) ? `*וופל ${i} - ${w.name.trim()}*` : `*וופל ${i}*`;
-      const sauces = (w.sauce||[]).length ? (w.sauce||[]).join(', ') : 'ללא';
-      const tops   = (w.top||[]).length ? (w.top||[]).join(', ') : 'ללא';
-      const extra  = (w.extra||[]).length ? (w.extra||[]).join(', ') : 'ללא';
+      const nameEl = $(`waffle_name_${i}`);
+      if (nameEl) nameEl.value = w.name || '';
 
-      const waffleDetails =
-        `\n🔸 ${title}:\n` +
-        `   🍫 רטבים: ${sauces}\n` +
-        `   🍪 תוספות: ${tops}\n` +
-        `   🍦 פיניש: ${extra}\n`;
-
-      msg += waffleDetails;
-      detailsText += waffleDetails;
+      ['sauce','top','extra'].forEach(group => {
+        const boxes = document.querySelectorAll(`input[type="checkbox"][data-index="${i}"][data-field="${group}"]`);
+        boxes.forEach(b => b.checked = (w[group] || []).includes(b.value));
+      });
     }
-  } else {
-    msg += `(ללא וופלים - פנייה כללית)\n`;
-    detailsText = '(אין וופלים בהזמנה זו)';
-  }
 
-  if (notes) msg += `\n📣 *הערות:* ${notes}\n`;
-  if (payMethod !== 'מזומן' && qty > 0) msg += `\n📸 *נא לצרף אישור תשלום*`;
+    function updateWaffleSummary(i) {
+      const w = ensureWaffle(i);
+      const parts = [];
+      const nm = (w.name || '').trim();
+      if (nm) parts.push(`“${nm}”`);
+      if ((w.sauce||[]).length) parts.push(`רטבים: ${(w.sauce||[]).join(', ')}`);
+      if ((w.top||[]).length) parts.push(`תוספות: ${(w.top||[]).join(', ')}`);
+      if ((w.extra||[]).length) parts.push(`פיניש: ${(w.extra||[]).join(', ')}`);
 
-  window.open(`https://wa.me/${MY_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
+      const text = parts.length ? parts.join(' | ') : 'עדיין לא בחרת תוספות';
+      const el = $(`waffle_summary_${i}`);
+      if (el) el.textContent = text;
+    }
 
-  const receipt =
-    `🧾 *קבלה - וופל בלגי* 🧾\n` +
-    `שלום ${name}!\n` +
-    `תאריך: ${new Date().toLocaleDateString('he-IL')}\n` +
-    `➖➖➖➖➖➖➖➖\n` +
-    `💰 *סה"כ לתשלום:* ${total} ₪\n` +
-    `💳 *אמצעי תשלום:* ${payMethod}\n` +
-    `🕒 *איסוף משוער:* ${time}\n` +
-    `➖➖➖➖➖➖➖➖\n` +
-    `*פירוט הזמנה:*\n${detailsText}\n` +
-    `תודה רבה שהזמנת מאיתנו! נתראה בקרוב! ✨`;
+    /** ✅ תשלום בסוף: קליק ראשון = כניסה ל-checkout (גילוי תשלום)
+        קליק שני = שליחה סופית (אחרי בחירת תשלום) */
+    function onSendClick() {
+      const qty = parseInt($('qty').value) || 0;
 
-  $('receiptLink').href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(receipt)}`;
-  $('receiptBox').style.display = 'block';
+      // אימות בסיסי לפני מעבר ל-checkout (כמו “סיום הזמנה”)
+      const name = $('name').value.trim();
+      const phoneRaw = $('phone').value.trim();
 
-  setTimeout(() => {
-    btn.disabled = false;
-    btn.textContent = 'שליחה סופית ✅';
-  }, 1200);
-}
+      localStorage.setItem('waffle_name', name);
+      localStorage.setItem('waffle_phone', phoneRaw);
 
-function resetForm() {
-  const resetAll = confirm("לאפס את הטופס?\n(שם וטלפון יישארו שמורים)");
-  if (!resetAll) return;
+      let ok = true;
+      if (!name) { showError('err-name','name'); ok = false; } else hideError('err-name','name');
 
-  // Clear UI fields
-  $('qty').value = 0;
-  $('time').value = '';
-  $('notes').value = '';
-  document.querySelectorAll('input[name="pay"]').forEach(r => r.checked = false);
+      const cleanPhone = normalizeILPhone(phoneRaw);
+      if (!cleanPhone) { showError('err-phone','phone'); ok = false; } else hideError('err-phone','phone');
 
-  // Reset state
-  state.waffles = [];
-  state.checkoutMode = false;
+      const notes = $('notes').value.trim();
+      if (qty === 0 && !notes) { $('err-qty').style.display = 'block'; ok = false; } else $('err-qty').style.display = 'none';
 
-  // Update DOM
-  updateUI();
-  $('receiptBox').style.display = 'none';
-  $('sendBtn').textContent = 'שליחת הזמנה 🚀';
-  $('payment-dynamic-area').innerHTML = '';
-}
-</script>
+      if (!ok) return;
+
+      // אם עוד לא ב-checkout — נכנסים אליו ומראים תשלום
+      if (!state.checkoutMode) {
+        state.checkoutMode = true;
+        updateUI();
+
+        // גלילה לתשלום
+        $('payment-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        $('sendBtn').textContent = 'שליחה סופית ✅';
+        return;
+      }
+
+      // כבר ב-checkout => חייבים אמצעי תשלום אם qty>0
+      const pay = document.querySelector('input[name="pay"]:checked');
+      if (qty > 0 && !pay) {
+        $('err-pay').style.display = 'block';
+        $('payment-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      $('err-pay').style.display = 'none';
+
+      // שליחה סופית
+      sendOrder(cleanPhone);
+    }
+
+    /** ✅ החזרנו כפתור פתיחת אפליקציה + נשארה העתקה */
+    function onPaymentChange(e) {
+      const val = e.target.value;
+      const area = $('payment-dynamic-area');
+
+      if (val === 'ביט') {
+        area.innerHTML = `
+          <div class="copy-box">
+            <span>מספר לביט: <b>${BIT_NUM}</b></span>
+            <button class="copy-btn-action focus-ring" type="button" data-copy="${BIT_NUM}">העתק</button>
+          </div>
+          <button class="btn-app btn-bit focus-ring" type="button" id="openBitBtn">פתח ביט לתשלום</button>
+          <div class="hint">אם לא נפתח — פתח ביט ידנית ושלח לפי המספר 👆</div>
+          <div class="hint"><b>* נא לצרף צילום מסך אחרי התשלום</b></div>
+        `;
+        $('openBitBtn').addEventListener('click', () => openAppLink('bit://'));
+      } else if (val === 'פייבוקס') {
+        area.innerHTML = `
+          <div class="copy-box">
+            <span>מספר לפייבוקס: <b>${PB_NUM}</b></span>
+            <button class="copy-btn-action focus-ring" type="button" data-copy="${PB_NUM}">העתק</button>
+          </div>
+          <button class="btn-app btn-paybox focus-ring" type="button" id="openPbBtn">פתח פייבוקס לתשלום</button>
+          <div class="hint">אם לא נפתח — פתח פייבוקס ידנית ושלח לפי המספר 👆</div>
+          <div class="hint"><b>* נא לצרף צילום מסך אחרי התשלום</b></div>
+        `;
+        $('openPbBtn').addEventListener('click', () => openAppLink('paybox://'));
+      } else {
+        area.innerHTML = `<div class="warn">תשלום במזומן בעת האיסוף.</div>`;
+      }
+    }
+
+    // ניסיון פתיחת אפליקציה (אין דרך 100% לדעת אם נפתח, אז אנחנו נותנים fallback ברור)
+    function openAppLink(uri) {
+      try {
+        window.location.href = uri;
+      } catch (e) {
+        alert('לא הצלחתי לפתוח את האפליקציה אוטומטית. פתח ידנית ושלם לפי המספר שמופיע.');
+      }
+    }
+
+    /** copy buttons */
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('button[data-copy]');
+      if (!btn) return;
+      const text = btn.getAttribute('data-copy');
+      await copyTextSmart(text, btn);
+    });
+
+    async function copyTextSmart(text, btn) {
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.classList.add('copied');
+        btn.innerText = 'הועתק!';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerText = 'העתק';
+        }, 1400);
+      } catch (e) {
+        const tmp = document.createElement('input');
+        tmp.value = text;
+        tmp.style.position = 'fixed';
+        tmp.style.left = '-9999px';
+        document.body.appendChild(tmp);
+        tmp.focus(); tmp.select();
+        alert('העתקה אוטומטית לא נתמכת כאן. סימנתי לך את המספר להעתקה ידנית: ' + text);
+        document.body.removeChild(tmp);
+      }
+    }
+
+    function normalizeILPhone(raw) {
+      let d = String(raw || '').replace(/\D/g, '');
+      if (d.startsWith('972')) {
+        d = '972' + d.slice(3).replace(/^0+/, '');
+        return d.length >= 11 ? d : null;
+      }
+      if (d.startsWith('0')) d = d.slice(1);
+      if (d.length === 9 && d.startsWith('5')) return '972' + d;
+      return null;
+    }
+
+    function showError(id, inputId) {
+      $(id).style.display = 'block';
+      if (inputId) $(inputId).classList.add('input-error');
+    }
+    function hideError(id, inputId) {
+      $(id).style.display = 'none';
+      if (inputId) $(inputId).classList.remove('input-error');
+    }
+
+    /** ✅ sendOrder מקבל cleanPhone שכבר נבדק */
+    function sendOrder(cleanPhone) {
+      const name = $('name').value.trim();
+      const phoneRaw = $('phone').value.trim();
+
+      const qty = parseInt($('qty').value) || 0;
+      const pay = document.querySelector('input[name="pay"]:checked');
+      const notes = $('notes').value.trim();
+
+      const btn = $('sendBtn');
+      btn.disabled = true;
+      btn.textContent = "שולח... ⏳";
+
+      const orderId = "WFL-" + Math.floor(Math.random()*10000);
+      const time = $('time').value || '--:--';
+      const payMethod = pay ? pay.value : 'ללא';
+      const total = qty * PRICE;
+
+      let msg =
+        `🧇 *הזמנה חדשה - וופל בלגי* 🧇\n` +
+        `🔢 *קוד:* ${orderId}\n` +
+        `➖➖➖➖➖➖➖➖\n` +
+        `👤 *שם:* ${name}\n` +
+        `📞 *טלפון:* ${phoneRaw}\n` +
+        `🕒 *איסוף:* ${time}\n` +
+        `➖➖➖➖➖➖➖➖\n` +
+        `📦 *כמות:* ${qty}\n` +
+        `💰 *לתשלום:* ${total} ₪\n` +
+        `💳 *אמצעי תשלום:* ${payMethod}\n` +
+        `➖➖➖➖➖➖➖➖\n` +
+        `📋 *פירוט:*\n`;
+
+      let detailsText = '';
+      if (qty > 0) {
+        for (let i=1; i<=qty; i++) {
+          const w = ensureWaffle(i);
+          const title = (w.name && w.name.trim()) ? `*וופל ${i} - ${w.name.trim()}*` : `*וופל ${i}*`;
+          const sauces = (w.sauce||[]).length ? (w.sauce||[]).join(', ') : 'ללא';
+          const tops   = (w.top||[]).length ? (w.top||[]).join(', ') : 'ללא';
+          const extra  = (w.extra||[]).length ? (w.extra||[]).join(', ') : 'ללא';
+
+          const waffleDetails =
+            `\n🔸 ${title}:\n` +
+            `   🍫 רטבים: ${sauces}\n` +
+            `   🍪 תוספות: ${tops}\n` +
+            `   🍦 פיניש: ${extra}\n`;
+
+          msg += waffleDetails;
+          detailsText += waffleDetails;
+        }
+      } else {
+        msg += `(ללא וופלים - פנייה כללית)\n`;
+        detailsText = '(אין וופלים בהזמנה זו)';
+      }
+
+      if (notes) msg += `\n📣 *הערות:* ${notes}\n`;
+      if (payMethod !== 'מזומן' && qty > 0) msg += `\n📸 *נא לצרף אישור תשלום*`;
+
+      window.open(`https://wa.me/${MY_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
+
+      const receipt =
+        `🧾 *קבלה - וופל בלגי* 🧾\n` +
+        `שלום ${name}!\n` +
+        `תאריך: ${new Date().toLocaleDateString('he-IL')}\n` +
+        `➖➖➖➖➖➖➖➖\n` +
+        `💰 *סה"כ לתשלום:* ${total} ₪\n` +
+        `💳 *אמצעי תשלום:* ${payMethod}\n` +
+        `🕒 *איסוף משוער:* ${time}\n` +
+        `➖➖➖➖➖➖➖➖\n` +
+        `*פירוט הזמנה:*\n${detailsText}\n` +
+        `תודה רבה שהזמנת מאיתנו! נתראה בקרוב! ✨`;
+
+      $('receiptLink').href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(receipt)}`;
+      $('receiptBox').style.display = 'block';
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = 'שליחה סופית ✅';
+      }, 1200);
+    }
+
+    function resetForm() {
+      const resetAll = confirm("לאפס את הטופס?\n(שם וטלפון יישארו שמורים)");
+      if (!resetAll) return;
+
+      $('time').value = '';
+      $('notes').value = '';
+      $('qty').value = 0;
+      $('waffles-container').innerHTML = '';
+      $('receiptBox').style.display = 'none';
+
+      document.querySelectorAll('input[name="pay"]').forEach(r => r.checked = false);
+      $('payment-dynamic-area').innerHTML = '';
+      $('payment-section').classList.add('payment-hidden');
+
+      ['err-name','err-phone','err-qty','err-pay'].forEach(id => $(id).style.display = 'none');
+      ['name','phone'].forEach(id => $(id).classList.remove('input-error'));
+
+      state.waffles = [];
+      state.checkoutMode = false;
+      $('sendBtn').textContent = 'שליחת הזמנה 🚀';
+
+      updateUI();
+
+      const clearSaved = confirm("למחוק גם שם וטלפון שמורים?");
+      if (clearSaved) {
+        localStorage.removeItem('waffle_name');
+        localStorage.removeItem('waffle_phone');
+        $('name').value = '';
+        $('phone').value = '';
+      }
+    }
+
+    function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    }
+  </script>
+
 </body>
 </html>
