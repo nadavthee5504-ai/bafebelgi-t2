@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Waffle Delight | וופל בלגי חם</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
     
@@ -14,42 +14,59 @@
             --accent: #ff8c00;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        /* איפוס בסיסי למניעת גלילה לצדדים */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+        }
         
-        body {
-            font-family: 'Assistant', sans-serif;
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden; /* מונע "בריחה" של המסך ימינה או שמאלה */
             background-color: var(--warm-bg);
             color: var(--chocolate);
-            margin: 0;
-            padding-bottom: 140px;
+            font-family: 'Assistant', sans-serif;
         }
 
+        /* באנר עליון מותאם לרוחב מסך טלפון */
         .top-banner {
             background: linear-gradient(135deg, #ffcc33 0%, #ffb347 100%);
-            padding: 40px 20px;
+            padding: 30px 20px;
             text-align: center;
             border-bottom-left-radius: 40px;
             border-bottom-right-radius: 40px;
             box-shadow: 0 10px 20px rgba(255, 179, 71, 0.2);
             color: white;
+            width: 100%;
         }
 
-        .top-banner h1 { margin: 0; font-size: 2.2rem; font-weight: 800; text-shadow: 1px 2px 4px rgba(0,0,0,0.1); }
+        .top-banner h1 { 
+            margin: 0; 
+            font-size: 1.8rem; /* גודל אופטימלי למובייל */
+            font-weight: 800; 
+            text-shadow: 1px 2px 4px rgba(0,0,0,0.1); 
+        }
+        
         .top-banner p { margin: 5px 0 0; font-weight: 600; opacity: 0.9; }
 
         .container {
-            max-width: 480px;
+            width: 100%;
+            max-width: 480px; /* רווח מקסימלי שמתאים לטלפונים */
             margin: -25px auto 0;
-            padding: 0 15px;
+            padding: 0 15px 140px; /* פדינג תחתון בשביל הפוטר הצף */
         }
 
         .card {
             background: white;
             border-radius: 25px;
-            padding: 22px;
+            padding: 20px;
             box-shadow: 0 12px 30px rgba(93, 64, 55, 0.06);
             margin-bottom: 20px;
             border: 1px solid rgba(255, 179, 71, 0.1);
+            width: 100%;
         }
 
         .section-title {
@@ -73,6 +90,7 @@
             background: #fafafa;
             transition: 0.3s;
             color: var(--chocolate);
+            font-size: 16px; /* מונע זום אוטומטי באייפון */
         }
 
         input:focus { border-color: var(--waffle-gold); outline: none; background: white; }
@@ -109,6 +127,7 @@
             transition: 0.3s;
         }
         .waffle-box.open { border-color: var(--waffle-gold); background: #fffdfa; }
+
         .waffle-header { padding: 15px; display: flex; justify-content: space-between; cursor: pointer; font-weight: 800; }
         .waffle-content { padding: 0 15px 15px; display: none; }
         .waffle-box.open .waffle-content { display: block; }
@@ -135,11 +154,9 @@
             width: 100%;
             padding: 14px;
             border-radius: 15px;
-            border: none;
             color: white;
             font-weight: 800;
             margin-top: 10px;
-            cursor: pointer;
             text-decoration: none;
         }
         .btn-bit { background: #2b5cff; }
@@ -155,11 +172,11 @@
             margin-top: 10px;
             border: 1px dashed #2b5cff;
         }
-        .btn-copy { background: white; border: 1px solid #ccc; padding: 4px 8px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+        .btn-copy { background: white; border: 1px solid #ccc; padding: 6px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
 
         .floating-footer {
             position: fixed;
-            bottom: 25px;
+            bottom: 20px;
             left: 15px;
             right: 15px;
             background: var(--chocolate);
@@ -180,14 +197,14 @@
             background: var(--waffle-gold);
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 12px 25px;
             border-radius: 18px;
             font-weight: 800;
             font-size: 1.1rem;
             cursor: pointer;
         }
 
-        .hidden { display: none; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -199,7 +216,7 @@
 
 <div class="container">
     <div class="card">
-        <div class="section-title">✨ פרטים למשלוח/איסוף</div>
+        <div class="section-title">✨ פרטים אישיים</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div>
                 <span class="label-text">שם מלא</span>
@@ -239,8 +256,8 @@
                 <span id="display-num" style="font-weight: 800;"></span>
                 <button class="btn-copy" onclick="copyNum()">העתק מספר</button>
             </div>
-            <a href="bit://" id="bit-link" class="pay-btn btn-bit">פתיחת אפליקציית Bit ➔</a>
-            <a href="paybox://" id="pb-link" class="pay-btn btn-pb">פתיחת אפליקציית PayBox ➔</a>
+            <a href="bit://" id="bit-link" class="pay-btn btn-bit">פתח Bit ➔</a>
+            <a href="paybox://" id="pb-link" class="pay-btn btn-pb">פתח PayBox ➔</a>
         </div>
         <div id="cash-info" class="hidden" style="text-align:center; padding:15px; background:#f9f9f9; border-radius:15px; font-weight:700;">
             💰 התשלום במזומן אצל משפחת טי
@@ -249,7 +266,7 @@
 
     <div class="card">
         <div class="section-title">💬 הערות מיוחדות</div>
-        <textarea id="cust-notes" rows="2" placeholder="אלרגיות או בקשות מיוחדות..."></textarea>
+        <textarea id="cust-notes" rows="2" placeholder="אלרגיות או בקשות..."></textarea>
     </div>
 </div>
 
@@ -285,38 +302,16 @@
 
     function renderWaffles() {
         const list = document.getElementById('waffles-list');
-        const currentCount = list.children.length;
-
-        if (state.qty > currentCount) {
-            for (let i = currentCount + 1; i <= state.qty; i++) {
+        const count = list.children.length;
+        if (state.qty > count) {
+            for (let i = count + 1; i <= state.qty; i++) {
                 const div = document.createElement('div');
                 div.className = 'waffle-box open';
                 div.id = `wbox-${i}`;
-                div.innerHTML = `
-                    <div class="waffle-header" onclick="toggleWbox(${i})">
-                        <span>וופל #${i}</span>
-                        <span style="font-size: 0.8rem; color: var(--accent);">שינוי ⌄</span>
-                    </div>
-                    <div class="waffle-content">
-                        <input type="text" id="wname-${i}" placeholder="שם הוופל (למשל: לאבא)" style="margin-bottom:12px; font-size:0.8rem; padding:10px;">
-                        ${Object.entries(CONFIG.menu).map(([cat, opts]) => `
-                            <div style="font-weight:700; font-size:0.8rem; margin-bottom:5px;">${cat}</div>
-                            <div class="chips-grid">
-                                ${opts.map(o => `
-                                    <label>
-                                        <input type="checkbox" class="chip-input" data-w="${i}" value="${o}">
-                                        <div class="chip-label">${o}</div>
-                                    </label>
-                                `).join('')}
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+                div.innerHTML = `<div class="waffle-header" onclick="toggleWbox(${i})"><span>וופל #${i}</span><span>⌄</span></div><div class="waffle-content"><input type="text" id="wname-${i}" placeholder="שם הוופל (למשל: לאבא)" style="margin-bottom:12px; font-size:16px;">${Object.entries(CONFIG.menu).map(([cat, opts]) => `<div style="font-weight:700; font-size:0.8rem; margin-bottom:5px;">${cat}</div><div class="chips-grid">${opts.map(o => `<label><input type="checkbox" class="chip-input" data-w="${i}" value="${o}"><div class="chip-label">${o}</div></label>`).join('')}</div>`).join('')}</div>`;
                 list.appendChild(div);
             }
-        } else {
-            while (list.children.length > state.qty) list.lastChild.remove();
-        }
+        } else { while (list.children.length > state.qty) list.lastChild.remove(); }
     }
 
     function toggleWbox(i) { document.getElementById(`wbox-${i}`).classList.toggle('open'); }
@@ -325,7 +320,6 @@
         const method = document.querySelector('input[name="pay"]:checked').value;
         const apps = document.getElementById('pay-apps');
         const cash = document.getElementById('cash-info');
-        
         if(method === 'מזומן') {
             apps.classList.add('hidden');
             cash.classList.remove('hidden');
@@ -346,7 +340,7 @@
 
     function handleAction() {
         if (state.step === 1) {
-            if (state.qty === 0 || !document.getElementById('cust-name').value) return alert('נא למלא שם ולבחור לפחות וופל אחד');
+            if (state.qty === 0 || !document.getElementById('cust-name').value) return alert('נא למלא שם ולבחור וופל');
             state.step = 2;
             document.getElementById('payment-card').classList.remove('hidden');
             document.getElementById('payment-card').scrollIntoView({ behavior: 'smooth' });
@@ -354,15 +348,13 @@
         } else {
             const pay = document.querySelector('input[name="pay"]:checked');
             if (!pay) return alert('נא לבחור אמצעי תשלום');
-            
             let orderText = "";
             for (let i = 1; i <= state.qty; i++) {
                 const wname = document.getElementById(`wname-${i}`).value;
                 const choices = [...document.querySelectorAll(`input[data-w="${i}"]:checked`)].map(c => c.value);
                 orderText += `\n*וופל ${i}${wname ? ' ('+wname+')' : ''}:* ${choices.join(', ') || 'בלי תוספות'}`;
             }
-
-            const msg = `🧇 *הזמנה חדשה - Waffle Delight* 🧇\n\n👤 שם: ${document.getElementById('cust-name').value}\n🕒 שעה: ${document.getElementById('cust-time').value || 'בהקדם'}\n💰 סה"כ: ${state.qty * CONFIG.price} ₪\n💳 תשלום: ${pay.value}${pay.value === 'מזומן' ? ' (משפחת טי)' : ''}\n\n*פירוט הזמנה:*${orderText}\n\n📝 הערות: ${document.getElementById('cust-notes').value || 'אין'}`;
+            const msg = `🧇 *הזמנה חדשה - Waffle Delight* 🧇\n\n👤 שם: ${document.getElementById('cust-name').value}\n🕒 שעה: ${document.getElementById('cust-time').value || 'בהקדם'}\n💰 סה"כ: ${state.qty * CONFIG.price} ₪\n💳 תשלום: ${pay.value}${pay.value === 'מזומן' ? ' (משפחת טי)' : ''}\n\n*פירוט:*${orderText}\n\n📝 הערות: ${document.getElementById('cust-notes').value || 'אין'}`;
             window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`);
         }
     }
