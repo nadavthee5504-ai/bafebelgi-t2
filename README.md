@@ -109,7 +109,6 @@
             transition: 0.3s;
         }
         .waffle-box.open { border-color: var(--waffle-gold); background: #fffdfa; }
-
         .waffle-header { padding: 15px; display: flex; justify-content: space-between; cursor: pointer; font-weight: 800; }
         .waffle-content { padding: 0 15px 15px; display: none; }
         .waffle-box.open .waffle-content { display: block; }
@@ -156,15 +155,7 @@
             margin-top: 10px;
             border: 1px dashed #2b5cff;
         }
-        .btn-copy {
-            background: white;
-            border: 1px solid #ccc;
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
+        .btn-copy { background: white; border: 1px solid #ccc; padding: 4px 8px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
 
         .floating-footer {
             position: fixed;
@@ -245,14 +236,14 @@
 
         <div id="pay-apps" class="hidden">
             <div class="copy-box">
-                <span id="display-num"></span>
+                <span id="display-num" style="font-weight: 800;"></span>
                 <button class="btn-copy" onclick="copyNum()">העתק מספר</button>
             </div>
             <a href="bit://" id="bit-link" class="pay-btn btn-bit">פתיחת אפליקציית Bit ➔</a>
             <a href="paybox://" id="pb-link" class="pay-btn btn-pb">פתיחת אפליקציית PayBox ➔</a>
         </div>
-        <div id="cash-info" class="hidden" style="text-align:center; padding:10px; background:#f9f9f9; border-radius:15px; font-weight:700;">
-            התשלום יתבצע במזומן אצל משפחת טי
+        <div id="cash-info" class="hidden" style="text-align:center; padding:15px; background:#f9f9f9; border-radius:15px; font-weight:700;">
+            💰 התשלום במזומן אצל משפחת טי
         </div>
     </div>
 
@@ -294,16 +285,38 @@
 
     function renderWaffles() {
         const list = document.getElementById('waffles-list');
-        const count = list.children.length;
-        if (state.qty > count) {
-            for (let i = count + 1; i <= state.qty; i++) {
+        const currentCount = list.children.length;
+
+        if (state.qty > currentCount) {
+            for (let i = currentCount + 1; i <= state.qty; i++) {
                 const div = document.createElement('div');
                 div.className = 'waffle-box open';
                 div.id = `wbox-${i}`;
-                div.innerHTML = `<div class="waffle-header" onclick="toggleWbox(${i})"><span>🧇 וופל #${i}</span><span>⌄</span></div><div class="waffle-content"><input type="text" id="wname-${i}" placeholder="שם הוופל (למשל: לאבא)" style="margin-bottom:12px; font-size:0.8rem; padding:10px;">${Object.entries(CONFIG.menu).map(([cat, opts]) => `<div style="font-weight:700; font-size:0.8rem; margin-bottom:5px;">${cat}</div><div class="chips-grid">${opts.map(o => `<label><input type="checkbox" class="chip-input" data-w="${i}" value="${o}"><div class="chip-label">${o}</div></label>`).join('')}</div>`).join('')}</div>`;
+                div.innerHTML = `
+                    <div class="waffle-header" onclick="toggleWbox(${i})">
+                        <span>וופל #${i}</span>
+                        <span style="font-size: 0.8rem; color: var(--accent);">שינוי ⌄</span>
+                    </div>
+                    <div class="waffle-content">
+                        <input type="text" id="wname-${i}" placeholder="שם הוופל (למשל: לאבא)" style="margin-bottom:12px; font-size:0.8rem; padding:10px;">
+                        ${Object.entries(CONFIG.menu).map(([cat, opts]) => `
+                            <div style="font-weight:700; font-size:0.8rem; margin-bottom:5px;">${cat}</div>
+                            <div class="chips-grid">
+                                ${opts.map(o => `
+                                    <label>
+                                        <input type="checkbox" class="chip-input" data-w="${i}" value="${o}">
+                                        <div class="chip-label">${o}</div>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
                 list.appendChild(div);
             }
-        } else { while (list.children.length > state.qty) list.lastChild.remove(); }
+        } else {
+            while (list.children.length > state.qty) list.lastChild.remove();
+        }
     }
 
     function toggleWbox(i) { document.getElementById(`wbox-${i}`).classList.toggle('open'); }
@@ -328,13 +341,12 @@
 
     function copyNum() {
         const num = document.getElementById('display-num').innerText;
-        navigator.clipboard.writeText(num);
-        alert('המספר הועתק: ' + num);
+        navigator.clipboard.writeText(num).then(() => alert('המספר הועתק: ' + num));
     }
 
     function handleAction() {
         if (state.step === 1) {
-            if (state.qty === 0 || !document.getElementById('cust-name').value) return alert('נא למלא שם ולבחור וופל');
+            if (state.qty === 0 || !document.getElementById('cust-name').value) return alert('נא למלא שם ולבחור לפחות וופל אחד');
             state.step = 2;
             document.getElementById('payment-card').classList.remove('hidden');
             document.getElementById('payment-card').scrollIntoView({ behavior: 'smooth' });
@@ -342,13 +354,15 @@
         } else {
             const pay = document.querySelector('input[name="pay"]:checked');
             if (!pay) return alert('נא לבחור אמצעי תשלום');
+            
             let orderText = "";
             for (let i = 1; i <= state.qty; i++) {
                 const wname = document.getElementById(`wname-${i}`).value;
                 const choices = [...document.querySelectorAll(`input[data-w="${i}"]:checked`)].map(c => c.value);
                 orderText += `\n*וופל ${i}${wname ? ' ('+wname+')' : ''}:* ${choices.join(', ') || 'בלי תוספות'}`;
             }
-            const msg = `🧇 *הזמנה חדשה - Waffle Delight* 🧇\n\n👤 שם: ${document.getElementById('cust-name').value}\n🕒 שעה: ${document.getElementById('cust-time').value || 'בהקדם'}\n💰 סה"כ: ${state.qty * CONFIG.price} ₪\n💳 תשלום: ${pay.value}${pay.value === 'מזומן' ? ' (משפחת טי)' : ''}\n\n*פירוט:*${orderText}\n\n📝 הערות: ${document.getElementById('cust-notes').value || 'אין'}`;
+
+            const msg = `🧇 *הזמנה חדשה - Waffle Delight* 🧇\n\n👤 שם: ${document.getElementById('cust-name').value}\n🕒 שעה: ${document.getElementById('cust-time').value || 'בהקדם'}\n💰 סה"כ: ${state.qty * CONFIG.price} ₪\n💳 תשלום: ${pay.value}${pay.value === 'מזומן' ? ' (משפחת טי)' : ''}\n\n*פירוט הזמנה:*${orderText}\n\n📝 הערות: ${document.getElementById('cust-notes').value || 'אין'}`;
             window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`);
         }
     }
